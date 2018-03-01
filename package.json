@@ -1,0 +1,19 @@
+{
+  "name": "@wealthsimple/async-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sdavenport@wealthsimple.com",
+  "license": "MIT",
+  "devDependencies": {
+    "redux": "^3.7.2",
+    "reselect": "^3.0.1"
+  },
+  "peerDependencies": {
+    "redux": ">=3.7.2",
+    "reselect": ">=3.0.1"
+  }
+}
