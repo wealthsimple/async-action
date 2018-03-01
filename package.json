@@ -9,10 +9,12 @@
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",
   "devDependencies": {
+    "lodash": "^4.17.5",
     "redux": "^3.7.2",
     "reselect": "^3.0.1"
   },
   "peerDependencies": {
+    "lodash": ">=4.17.5",
     "redux": ">=3.7.2",
     "reselect": ">=3.0.1"
   }

@@ -7,6 +7,10 @@ The idea is to provide a consistent way of 'flattening temporal dependencies' in
 TODO:
 * setup instructions
 * usage examples
+  * making an HTTP request
+  * handling response data in your reducer
+  * checking if it's still pending
+  * checking if it failed
 * lint
 * flow
 * unit tests
