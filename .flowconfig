@@ -1,0 +1,15 @@
+[ignore]
+.*/node_modules/.*
+.*/dist/.*
+.*/coverage/.*
+.*/jest/html-loader.js
+.*/plop_templates/.*
+.*/plopfile.js
+../.*
+
+[include]
+
+[libs]
+
+[options]
+all=true

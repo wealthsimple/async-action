@@ -3,7 +3,7 @@ export type AsyncAction = {
   payload?: any,
   error?: Error,
   meta: {
-    status: string,
+    status: 'ASYNC_COMPLETE' | 'ASYNC_PENDING' | 'ASYNC_FAILED',
     identifier?: string,
   },
 }

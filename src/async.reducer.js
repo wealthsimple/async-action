@@ -1,5 +1,4 @@
 import type { AsyncAction } from './async.types';
-import { ASYNC_PENDING, ASYNC_COMPLETE, ASYNC_FAILED } from './async.constants';
 
 export type AsyncRequests = {
   [actionType: string]: {
@@ -17,15 +16,15 @@ export const asyncActionReducer = (state: AsyncRequests = {}, action: AsyncActio
   const key = `${action.type}(${action.meta.identifier || ''})`;
 
   switch (action.meta.status) {
-    case ASYNC_PENDING: return {
+    case 'ASYNC_PENDING': return {
       ...state,
       [key]: { pending: true },
     };
-    case ASYNC_COMPLETE: return {
+    case 'ASYNC_COMPLETE': return {
       ...state,
       [key]: undefined,
     };
-    case ASYNC_FAILED: return {
+    case 'ASYNC_FAILED': return {
       ...state,
       [key]: {
         pending: false,
