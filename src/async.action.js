@@ -3,6 +3,16 @@ import _ from 'lodash';
 import type { AsyncAction, AsyncOperation } from './async.types';
 import { ASYNC_PENDING, ASYNC_COMPLETE, ASYNC_FAILED } from './async.constants';
 
+
+export const isPending = (action: AsyncAction) =>
+  _.get(action, 'meta.status') === ASYNC_PENDING;
+
+export const isComplete = (action: AsyncAction) =>
+  _.get(action, 'meta.status') === ASYNC_COMPLETE;
+
+export const isFailed = (action: AsyncAction) =>
+  _.get(action, 'meta.status') === ASYNC_FAILED;
+
 /**
  * Helper for API requests or other async actions.
  *
@@ -16,7 +26,7 @@ export const createAsyncAction = <R>(
   type: string,
   operation: AsyncOperation<R>,
   identifier?: string,
-) => (dispatch: Dispatch<AsyncAction>) => {
+) => (dispatch: Dispatch<AsyncAction>): Promise<void> => {
   dispatch({
     type,
     meta: {
@@ -25,7 +35,7 @@ export const createAsyncAction = <R>(
     },
   });
 
-  operation()
+  return operation()
     .then(result => dispatch({
       type,
       payload: result,
@@ -34,21 +44,20 @@ export const createAsyncAction = <R>(
         identifier,
       },
     }))
-    .catch(error => dispatch({
-      type,
-      error: error || new Error('Unknown'),
-      meta: {
-        status: ASYNC_FAILED,
-        identifier,
-      },
-    }));
+    .catch(error => {
+      try {
+        dispatch({
+          type,
+          error: error ? JSON.stringify(error) : 'Unknown',
+          meta: {
+            status: ASYNC_FAILED,
+            identifier,
+          },
+        });
+      } catch (e) {
+        console.error('Error during dispatch', e);
+        throw e;
+      }
+      throw error;
+    });
 };
-
-export const isPending = (action: AsyncAction) =>
-  _.get(action, 'meta.status') === ASYNC_PENDING;
-
-export const isComplete = (action: AsyncAction) =>
-  _.get(action, 'meta.status') === ASYNC_COMPLETE;
-
-export const isFailed = (action: AsyncAction) =>
-  _.get(action, 'meta.status') === ASYNC_FAILED;
