@@ -77,9 +77,9 @@ describe('Async Action Creators', () => {
   it('doesn\'t swallow errors that happen while notifying', async () => {
     const mockDispatch = jest.fn()
       // First call: pretend that set to pending succeeds.
-      .mockImplementationOnce(() => ({ type: 'WAT', meta: { status: 'ASYNC_PENDING' } }))
+      .mockImplementationOnce(_a => _a)
       // Second call: pretend dispatching the success case explodes in a reducer somewhere.
-      .mockImplementationOnce((() => { throw new Error('DISPATCH BOOM'); }));
+      .mockImplementationOnce(((_a) => { throw new Error('DISPATCH BOOM'); }));
     const mockGetState = () => ({});
 
     const actionThunk = createAsyncAction(
