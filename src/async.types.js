@@ -9,3 +9,21 @@ export type AsyncAction = {
 }
 
 export type AsyncOperation<R> = (...args: any) => Promise<R>;
+
+export type ErrorInfo = {
+  name: string;
+  message: string;
+  stack?: string;
+}
+
+export type AsyncActionRecord = {
+  pending: boolean;
+  error?: ErrorInfo;
+}
+
+export type AsyncActionState = {
+  [actionType: string]: AsyncActionRecord;
+}
+
+export type IsPendingSelector = (state: any) => boolean;
+export type ErrorSelector = (state: any) => ?ErrorInfo;

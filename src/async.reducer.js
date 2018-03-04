@@ -1,17 +1,14 @@
-import type { AsyncAction } from './async.types';
-
-export type AsyncRequests = {
-  [actionType: string]: {
-    pending: boolean,
-    error?: Error,
-  },
-}
+import _ from 'lodash';
+import type { AsyncAction, AsyncActionState } from './async.types';
 
 /**
  * Keeps information about pending or failed async actions in the store.
  * UI can use this info to display spinners or error information.
  */
-export const asyncActionReducer = (state: AsyncRequests = {}, action: AsyncAction) => {
+export const asyncActionReducer = (
+  state: AsyncActionState = {},
+  action: AsyncAction,
+): AsyncActionState => {
   if (!action.meta) { return state; }
   const key = `${action.type}(${action.meta.identifier || ''})`;
 
@@ -28,7 +25,11 @@ export const asyncActionReducer = (state: AsyncRequests = {}, action: AsyncActio
       ...state,
       [key]: {
         pending: false,
-        error: action.error,
+        error: {
+          name: _.get(action, 'error.name') || 'UNKNOWN',
+          message: _.get(action, 'error.message') || 'UNKNOWN',
+          stack: _.get(action, 'error.stack'),
+        },
       },
     };
     default: return state;

@@ -11,6 +11,11 @@ TODO:
   * handling response data in your reducer
   * checking if it's still pending
   * checking if it failed
-* lint
-* flow
 * unit tests
+* circle-CI
+* circulate for discussion & feedback.
+
+Peer deps:
+* reselect
+* redux
+* redux-thunk
