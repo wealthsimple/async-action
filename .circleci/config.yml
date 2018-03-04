@@ -1,0 +1,62 @@
+defaults: &defaults
+  working_directory: /home/circle/wealthsimple
+  docker:
+    - image: wealthsimple/node:9.5.0-docker
+      environment:
+        JUNIT_REPORT_PATH: /tmp/test-results
+        JUNIT_REPORT_NAME: test-results.xml
+
+references:
+  attach_code_workspace: &attach_code_workspace
+    attach_workspace:
+      at: /home/circle/wealthsimple
+
+version: 2
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - *attach_code_workspace
+      - run:
+          name: Runs unit tests and linters
+          command: npm run test
+      - store_test_results:
+          path: /tmp/test-results
+
+  retirejs:
+    <<: *defaults
+    steps:
+      - *attach_code_workspace
+      - run:
+          name: Checks code for known vulnerabilities
+          command: npm run retire
+
+  checkout:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-node-modules-{{ checksum "package-lock.json" }}
+      - run:
+          name: Checks out code and installs npm dependencies
+          command: |
+            sudo npm install
+      - save_cache:
+          key: v1-node-modules-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths: .
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - checkout
+      - retirejs:
+          requires:
+            - checkout
+      - test:
+          requires:
+            - checkout
