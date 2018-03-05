@@ -1,6 +1,6 @@
 import type { Dispatch } from 'redux';
 import _ from 'lodash';
-import type { AsyncAction, AsyncOperation } from './async.types';
+import type { AsyncAction, AsyncOperation, AsyncActionOptions } from './async.types';
 import { makeIsPendingSelector } from './async.selectors';
 
 export const isPending = (action: AsyncAction) =>
@@ -20,11 +20,14 @@ export const isFailed = (action: AsyncAction) =>
  * appropriate.
  *
  * Returns a thunk that you can dispatch.
+ *
+ * The optional 'options' parameter gives you more control:
+ *   * identifier can be used to disambiguate two instances of the same action.
  */
 export const createAsyncAction = <R>(
   type: string,
   operation: AsyncOperation<R>,
-  identifier?: string,
+  { identifier }: AsyncActionOptions = {},
 ) => (
   dispatch: Dispatch<*>,
   getState: Function,

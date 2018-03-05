@@ -8,7 +8,7 @@ describe('Async Action Creators', () => {
     const actionThunk = createAsyncAction(
       'SOME_ACTION',
       () => Promise.resolve('a payload'),
-      'anIdentifier');
+      { identifier: 'anIdentifier' });
     await actionThunk(mockDispatch, mockGetState);
 
     expect(mockDispatch).toHaveBeenCalledTimes(2);
@@ -32,7 +32,7 @@ describe('Async Action Creators', () => {
       const actionThunk = createAsyncAction(
         'SOME_ACTION',
         () => Promise.reject(new Error('BOOM')),
-        'anIdentifier');
+        { identifier: 'anIdentifier' });
       await actionThunk(mockDispatch, mockGetState);
     } catch (err) {
       expect(err).toEqual(new Error('BOOM'));
@@ -55,8 +55,10 @@ describe('Async Action Creators', () => {
     const mockDispatch = jest.fn();
     const mockGetState = () => ({
       asyncActions: {
-        'SOME_ACTION(anIdentifier)': {
-          pending: true,
+        SOME_ACTION: {
+          anIdentifier: {
+            pending: true,
+          },
         },
       },
     });
@@ -64,7 +66,7 @@ describe('Async Action Creators', () => {
     const actionThunk = createAsyncAction(
       'SOME_ACTION',
       () => Promise.resolve('foo'),
-      'anIdentifier');
+      { identifier: 'anIdentifier' });
     await actionThunk(mockDispatch, mockGetState);
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
@@ -85,7 +87,7 @@ describe('Async Action Creators', () => {
     const actionThunk = createAsyncAction(
       'SOME_ACTION',
       () => Promise.resolve('foo'),
-      'anIdentifier');
+      { identifier: 'anIdentifier' });
 
     try {
       await actionThunk(mockDispatch, mockGetState);

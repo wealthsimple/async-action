@@ -1,4 +1,8 @@
-import { makeIsPendingSelector, makeErrorSelector } from './async.selectors';
+import {
+  makeIsPendingSelector,
+  makeErrorSelector,
+  makeAllPendingSelector,
+} from './async.selectors';
 
 describe('AsyncSelectors', () => {
   let state;
@@ -8,15 +12,16 @@ describe('AsyncSelectors', () => {
     fakeError = new Error('BOOM');
     state = {
       asyncActions: {
-        'FOO_ACTION(fooId1)': {
-          pending: true,
-        },
-        'FOO_ACTION(fooId2)': {
-          pending: false,
-          error: {
-            name: 'Error',
-            message: 'BOOM',
-            stack: fakeError.stack,
+        FOO_ACTION: {
+          fooId0: { pending: true },
+          fooId1: { pending: true },
+          fooId2: {
+            pending: false,
+            error: {
+              name: 'Error',
+              message: 'BOOM',
+              stack: fakeError.stack,
+            },
           },
         },
       },
@@ -46,5 +51,11 @@ describe('AsyncSelectors', () => {
     });
 
     expect(fooId3ErrorSelector(state)).toBe(null);
+  });
+
+  it('should let you select all ongoing identifiers for an action', () => {
+    const fooActionAllPendingSelector = makeAllPendingSelector('FOO_ACTION');
+
+    expect(fooActionAllPendingSelector(state)).toEqual(['fooId0', 'fooId1']);
   });
 });

@@ -14,8 +14,10 @@ describe('AsyncAction reducer', () => {
     const newState = asyncActionReducer(state, pendingAction);
 
     expect(newState).toEqual({
-      'GET_FOOS_BY_NAME(nameOfTheFoo)': {
-        pending: true,
+      GET_FOOS_BY_NAME: {
+        nameOfTheFoo: {
+          pending: true,
+        },
       },
     });
 
@@ -31,7 +33,9 @@ describe('AsyncAction reducer', () => {
 
     const finalState = asyncActionReducer(newState, completeAction);
 
-    expect(finalState).toEqual({});
+    expect(finalState).toEqual({
+      GET_FOOS_BY_NAME: {},
+    });
   });
 
   it('should record a failed request', () => {
@@ -48,12 +52,14 @@ describe('AsyncAction reducer', () => {
     const newState = asyncActionReducer(state, action);
 
     expect(newState).toEqual({
-      'GET_FOOS_BY_NAME(nameOfTheFoo)': {
-        pending: false,
-        error: {
-          name: 'Error',
-          message: 'BOOM',
-          stack: action.error.stack,
+      GET_FOOS_BY_NAME: {
+        nameOfTheFoo: {
+          pending: false,
+          error: {
+            name: 'Error',
+            message: 'BOOM',
+            stack: action.error.stack,
+          },
         },
       },
     });
@@ -74,11 +80,13 @@ describe('AsyncAction reducer', () => {
     const newState = asyncActionReducer(state, action);
 
     expect(newState).toEqual({
-      'GET_FOOS_BY_NAME(nameOfTheFoo)': {
-        pending: false,
-        error: {
-          name: 'UNKNOWN',
-          message: 'UNKNOWN',
+      GET_FOOS_BY_NAME: {
+        nameOfTheFoo: {
+          pending: false,
+          error: {
+            name: 'UNKNOWN',
+            message: 'UNKNOWN',
+          },
         },
       },
     });
