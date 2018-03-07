@@ -41,7 +41,7 @@
     "lodash": ">=4.17.5",
     "redux": ">=3.7.2",
     "reselect": ">=3.0.1",
-    "redux-thunk": ">2.2.0"
+    "redux-thunk": ">=2.2.0"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/jest/load-libs.js",
