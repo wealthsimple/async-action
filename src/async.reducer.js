@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type { AsyncAction, AsyncActionState } from './async.types';
 
 /**
@@ -35,9 +34,9 @@ export const asyncActionReducer = (
         [action.meta.identifier || '']: {
           pending: false,
           error: {
-            name: _.get(action, 'error.name') || 'UNKNOWN',
-            message: _.get(action, 'error.message') || 'UNKNOWN',
-            stack: _.get(action, 'error.stack'),
+            name: (action.error && action.error.name) ? action.error.name : 'UNKNOWN',
+            message: (action.error && action.error.message) ? action.error.message : 'UNKNOWN',
+            stack: action.error ? action.error.stack : undefined,
           },
         },
       },

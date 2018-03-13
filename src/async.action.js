@@ -1,16 +1,15 @@
 import type { Dispatch } from 'redux';
-import _ from 'lodash';
 import type { AsyncAction, AsyncOperation, AsyncActionOptions } from './async.types';
 import { makeIsPendingSelector } from './async.selectors';
 
 export const isPending = (action: AsyncAction) =>
-  _.get(action, 'meta.status') === 'ASYNC_PENDING';
+  !!action.meta && action.meta.status === 'ASYNC_PENDING';
 
 export const isComplete = (action: AsyncAction) =>
-  _.get(action, 'meta.status') === 'ASYNC_COMPLETE';
+  !!action.meta && action.meta.status === 'ASYNC_COMPLETE';
 
 export const isFailed = (action: AsyncAction) =>
-  _.get(action, 'meta.status') === 'ASYNC_FAILED';
+  !!action.meta && action.meta.status === 'ASYNC_FAILED';
 
 /**
  * Helper for API requests or other async actions.

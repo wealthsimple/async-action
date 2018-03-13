@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
-import _ from 'lodash';
+import get from 'lodash.get';
+import pickBy from 'lodash.pickby';
 import type {
   AllPendingSelector,
   IsPendingSelector,
@@ -16,10 +17,7 @@ export const makeAllPendingSelector = (actionType: string): AllPendingSelector =
   createSelector(
     selectAllAsyncRequests,
     allAsyncRequests =>
-      _.chain(allAsyncRequests[actionType])
-        .pickBy(r => !!r.pending)
-        .keys()
-        .value());
+      Object.keys(pickBy(allAsyncRequests[actionType], r => !!r.pending)));
 
 /**
  * Creates a selector that returns true if the given action is pending.
@@ -34,7 +32,7 @@ export const makeIsPendingSelector = (
   createSelector(
     selectAllAsyncRequests,
     allAsyncRequests =>
-      !!_.get(allAsyncRequests, `${actionType}.${identifier || ''}.pending`));
+      !!get(allAsyncRequests, `${actionType}.${identifier || ''}.pending`));
 
 /**
  * Creates a selector that returns any error for the given actionType and optional
@@ -47,7 +45,7 @@ export const makeErrorSelector = (
 ): ErrorSelector =>
   createSelector(
     selectAllAsyncRequests,
-    allAsyncRequests => _.get(
+    allAsyncRequests => get(
       allAsyncRequests,
       `${actionType}.${identifier || ''}.error`) ||
       null);

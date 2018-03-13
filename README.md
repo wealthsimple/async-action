@@ -139,6 +139,9 @@ const selector = makeAllPendingSelector('FETCH_ACCOUNT_DATA', 'id1');
 selector(state);
 ```
 
-## API - Advanced - Caching
+## Releasing New Versions
 
-TODO.
+1) Run `yarn prepare` to update the type defs that consumers will use in their code.
+2) Update the version in package.lock
+3) Merge these changes to master
+4) Create a github release with `vX.Y.Z` where `X.Y.Z` is the number from package.json.

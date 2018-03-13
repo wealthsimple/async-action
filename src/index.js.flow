@@ -1,0 +1,39 @@
+// @flow
+
+declare class Class0 {
+  static $call(message?: string): Class0;
+  static captureStackTrace(target: Object, constructor?: Function): void;
+  static prepareStackTrace: (err: Class0, stack: Array<CallSite>) => mixed;
+  static stackTraceLimit: number;
+
+  columnNumber?: number;
+  description?: string;
+  fileName?: string;
+  lineNumber?: number;
+  message: string;
+  name: string;
+  number?: number;
+  stack: string;
+  constructor(message?: mixed): void;
+  toString(): string;
+}
+export type AllPendingSelector = (state: any) => Array<string>;
+export type AsyncAction = {error?: Class0, meta: {identifier?: string, status: "ASYNC_COMPLETE" | "ASYNC_PENDING" | "ASYNC_FAILED" | "ASYNC_DEDUPED"}, payload?: any, type: string};
+export type AsyncActionOptions = {identifier?: string};
+export type AsyncActionRecord = {error?: {message: string, name: string, stack?: string}, pending: boolean};
+export type AsyncActionState = {[actionType: string]: {error?: {message: string, name: string, stack?: string}, pending: boolean}};
+export type AsyncOperation<R> = (...args: any) => Promise<R>;
+
+export type ErrorInfo = {message: string, name: string, stack?: string};
+export type ErrorSelector = (state: any) => ?{message: string, name: string, stack?: string};
+export type IsPendingSelector = (state: any) => boolean;
+declare export function asyncActionReducer(state?: {[actionType: string]: {error?: {message: string, name: string, stack?: string}, pending: boolean}}, action: {error?: Class0, meta: {identifier?: string, status: "ASYNC_COMPLETE" | "ASYNC_PENDING" | "ASYNC_FAILED" | "ASYNC_DEDUPED"}, payload?: any, type: string}): {[actionType: string]: {error?: {message: string, name: string, stack?: string}, pending: boolean}};
+declare export function createAsyncAction<R>(type: string, operation: <R>(...args: any) => Promise<R>, _?: {identifier?: string}): (dispatch: <A>(action: A) => A, getState: Function) => Promise<void> | (dispatch: <A>(action: A) => A, getState: Function) => Promise<void>;
+
+declare export function isComplete(action: {error?: Class0, meta: {identifier?: string, status: "ASYNC_COMPLETE" | "ASYNC_PENDING" | "ASYNC_FAILED" | "ASYNC_DEDUPED"}, payload?: any, type: string}): boolean | boolean;
+declare export function isFailed(action: {error?: Class0, meta: {identifier?: string, status: "ASYNC_COMPLETE" | "ASYNC_PENDING" | "ASYNC_FAILED" | "ASYNC_DEDUPED"}, payload?: any, type: string}): boolean | boolean;
+declare export function isPending(action: {error?: Class0, meta: {identifier?: string, status: "ASYNC_COMPLETE" | "ASYNC_PENDING" | "ASYNC_FAILED" | "ASYNC_DEDUPED"}, payload?: any, type: string}): boolean | boolean;
+declare export function makeAllPendingSelector(actionType: string): (state: any) => Array<string>;
+declare export function makeErrorSelector(actionType: string, identifier?: string): (state: any) => ?{message: string, name: string, stack?: string};
+declare export function makeIsPendingSelector(actionType: string, identifier?: string): (state: any) => boolean;
+
