@@ -80,7 +80,7 @@ By default, there can only be one instance of an AsyncAction with a particular t
 ```js
 const fetchAccountData = (accountId: string) =>
   createAsyncAction(
-    'FETCH_ACCOUNT_DATA',
+    { type: 'FETCH_ACCOUNT_DATA' },
     () => http.get(`/api/accounts/${accountId}`));
 ```
 
@@ -91,7 +91,7 @@ import { createAsyncAction } from '@wealthsimple/async-action';
 
 const fetchAccountData = (accountId: string) =>
   createAsyncAction(
-    'FETCH_ACCOUNT_DATA',
+    { type: 'FETCH_ACCOUNT_DATA' },
     () => http.get(`/api/accounts/${accountId}`),
     { identifier: accountId });
 
