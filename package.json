@@ -1,6 +1,6 @@
 {
   "name": "@wealthsimple/async-action",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -14,6 +14,7 @@
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",
   "devDependencies": {
+    "babel-core": "^6",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^22.4.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
@@ -31,17 +32,16 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "flow-bin": "^0.66.0",
+    "flow-typed": "^2.3.0",
     "jest": "^22.4.2",
-    "lodash": "^4.17.5",
     "redux": "^3.7.2",
     "reselect": "^3.0.1",
     "retire": "^1.5.1"
   },
   "peerDependencies": {
-    "lodash": ">=4.17.5",
     "redux": ">=3.7.2",
-    "reselect": ">=3.0.1",
-    "redux-thunk": ">=2.2.0"
+    "redux-thunk": ">=2.2.0",
+    "reselect": ">=3.0.1"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/jest/load-libs.js",

@@ -1,3 +1,4 @@
+// @flow
 import { asyncActionReducer } from './async.reducer';
 
 describe('AsyncAction reducer', () => {

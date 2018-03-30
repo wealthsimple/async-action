@@ -1,3 +1,4 @@
+// @flow
 import { createAsyncAction, isPending, isComplete, isFailed } from './async.action';
 
 describe('Async Action Creators', () => {
@@ -6,7 +7,7 @@ describe('Async Action Creators', () => {
     const mockGetState = () => ({});
 
     const actionThunk = createAsyncAction(
-      'SOME_ACTION',
+      { type: 'SOME_ACTION' },
       () => Promise.resolve('a payload'),
       { identifier: 'anIdentifier' });
     await actionThunk(mockDispatch, mockGetState);
@@ -15,12 +16,15 @@ describe('Async Action Creators', () => {
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'SOME_ACTION',
       meta: { status: 'ASYNC_PENDING', identifier: 'anIdentifier' },
+      error: null,
+      payload: null,
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'SOME_ACTION',
       payload: 'a payload',
       meta: { status: 'ASYNC_COMPLETE', identifier: 'anIdentifier' },
+      error: null,
     });
   });
 
@@ -30,7 +34,7 @@ describe('Async Action Creators', () => {
 
     try {
       const actionThunk = createAsyncAction(
-        'SOME_ACTION',
+        { type: 'SOME_ACTION' },
         () => Promise.reject(new Error('BOOM')),
         { identifier: 'anIdentifier' });
       await actionThunk(mockDispatch, mockGetState);
@@ -42,12 +46,15 @@ describe('Async Action Creators', () => {
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'SOME_ACTION',
       meta: { status: 'ASYNC_PENDING', identifier: 'anIdentifier' },
+      payload: null,
+      error: null,
     });
 
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'SOME_ACTION',
       error: new Error('BOOM'),
       meta: { status: 'ASYNC_FAILED', identifier: 'anIdentifier' },
+      payload: null,
     });
   });
 
@@ -64,7 +71,7 @@ describe('Async Action Creators', () => {
     });
 
     const actionThunk = createAsyncAction(
-      'SOME_ACTION',
+      { type: 'SOME_ACTION' },
       () => Promise.resolve('foo'),
       { identifier: 'anIdentifier' });
     await actionThunk(mockDispatch, mockGetState);
@@ -73,6 +80,8 @@ describe('Async Action Creators', () => {
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'SOME_ACTION',
       meta: { status: 'ASYNC_DEDUPED', identifier: 'anIdentifier' },
+      payload: null,
+      error: null,
     });
   });
 
@@ -85,7 +94,7 @@ describe('Async Action Creators', () => {
     const mockGetState = () => ({});
 
     const actionThunk = createAsyncAction(
-      'SOME_ACTION',
+      { type: 'SOME_ACTION' },
       () => Promise.resolve('foo'),
       { identifier: 'anIdentifier' });
 

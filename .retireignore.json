@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "component": "hoek",
+    "version" : "2.16.3",
+    "justification": "Low-severity, not used at runtime, community fixes pending. See https://hackerone.com/reports/310439."
+  },
+  {
+    "component": "lodash",
+    "version": "3.10.1",
+    "justification": "Low-severity, not used at runtime, community fixes pending. See https://hackerone.com/reports/310439."
+  }
+]

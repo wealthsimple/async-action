@@ -10,6 +10,7 @@ This lib is intended to be used with [redux-thunk](https://github.com/gaearon/re
 * It enforces a standard way of tracking progress and errors in the store.
 * It can deduplicate actions that perform the same operation simultaneously,
 helping to eliminate race conditions in your code.
+* It provides a consistent pattern for querying whether things are in progress or not.
 
 ## API - Basic Usage:
 
@@ -20,12 +21,16 @@ You can use `createAsyncAction` to make an action from an action type and a func
 ```js
 import { createAsyncAction } from '@wealthsimple/async-action';
 
+const action = {
+  type: 'FETCH_ACCOUNTS',
+};
+
 const operation = () => http
   .get('/api/accounts')
   .then(r => r.data));
 
 export const fetchAccounts = () =>
-  createAsyncAction('FETCH_ACCOUNTS', operation);
+  createAsyncAction(action, operation);
 ```
 
 This function returns a thunk which can be dispatched to Redux.
@@ -50,7 +55,7 @@ const accountDataReducer = (state = {}, action) => {
 
 ### Selecting:
 
-This libary also provides helpers getting information about ongoing actions: `makeIsPendingSelector` and `makeErrorSelector`. These two functions let you make selectors for pending and error states from your actions:
+This library also provides helpers getting information about ongoing actions: `makeIsPendingSelector` and `makeErrorSelector`. These two functions let you make selectors for pending and error states from your actions:
 
 ```js
 const selectAccountsFetchPending = makeIsPendingSelector(FETCH_ACCOUNTS);
@@ -70,7 +75,7 @@ selectAccountsFetchFailed(state)
 
 ### Dispatching:
 
-By default, there can only be one instance of an AsyncAction active at any given time. This is fine for actions like `FETCH_ACCOUNTS` above that don't take any parameters. However what if you want to use the same action type to allow fetching of data for specific accounts?
+By default, there can only be one instance of an AsyncAction with a particular type active at any given time. This is fine for actions like `FETCH_ACCOUNTS` above that don't take any parameters. However what if you want to use the same action type to allow fetching of data for specific accounts?
 
 ```js
 const fetchAccountData = (accountId: string) =>
@@ -139,6 +144,8 @@ const selector = makeAllPendingSelector('FETCH_ACCOUNT_DATA', 'id1');
 selector(state);
 ```
 
-## API - Advanced - Caching
+## Releasing New Versions
 
-TODO.
+1) Update the version in package.json and yarn.lock
+2) Merge these changes to master
+4) Create a github release with `vX.Y.Z` where `X.Y.Z` is the number from package.json. Please follow semantic versioning.

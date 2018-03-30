@@ -20,12 +20,15 @@
     "no-console": "warn",
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "import/prefer-default-export": "off",
-    "function-paren-newline": "off"
+    "function-paren-newline": "off",
+    "arrow-parens": "off"
   },
   "parserOptions": {
     "sourceType": "module"
   },
   "globals": {
-    "jest": true
+    "jest": true,
+    "$Subtype": true,
+    "R": true
   }
 }

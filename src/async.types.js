@@ -1,18 +1,25 @@
-export type AsyncAction = {
-  type: string,
-  payload?: any,
-  error?: Error,
+// @flow
+import type { Dispatch } from 'redux';
+
+export type SimpleAction = { type: $Subtype<string> }
+
+export type AsyncAction<Action: SimpleAction, PayloadType> = Action & {
+  payload?: ?PayloadType,
+  error?: ?Error,
   meta: {
     status: 'ASYNC_COMPLETE' | 'ASYNC_PENDING' | 'ASYNC_FAILED' | 'ASYNC_DEDUPED',
     identifier?: string,
   },
 }
 
+export type AsyncThunk = (
+  dispatch: Dispatch<*>,
+  getState: Function,
+) => Promise<*>;
+
 export type AsyncActionOptions = {
   identifier?: string;
 };
-
-export type AsyncOperation<R> = (...args: any) => Promise<R>;
 
 export type ErrorInfo = {
   name: string;

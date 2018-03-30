@@ -1,5 +1,5 @@
+// @flow
 import { createSelector } from 'reselect';
-import _ from 'lodash';
 import type {
   AllPendingSelector,
   IsPendingSelector,
@@ -16,10 +16,8 @@ export const makeAllPendingSelector = (actionType: string): AllPendingSelector =
   createSelector(
     selectAllAsyncRequests,
     allAsyncRequests =>
-      _.chain(allAsyncRequests[actionType])
-        .pickBy(r => !!r.pending)
-        .keys()
-        .value());
+      Object.keys(allAsyncRequests[actionType] || {})
+        .filter(k => !!allAsyncRequests[actionType][k].pending));
 
 /**
  * Creates a selector that returns true if the given action is pending.
@@ -34,7 +32,10 @@ export const makeIsPendingSelector = (
   createSelector(
     selectAllAsyncRequests,
     allAsyncRequests =>
-      !!_.get(allAsyncRequests, `${actionType}.${identifier || ''}.pending`));
+      !!allAsyncRequests &&
+      !!allAsyncRequests[actionType] &&
+      !!allAsyncRequests[actionType][identifier || ''] &&
+      !!allAsyncRequests[actionType][identifier || ''].pending);
 
 /**
  * Creates a selector that returns any error for the given actionType and optional
@@ -47,7 +48,9 @@ export const makeErrorSelector = (
 ): ErrorSelector =>
   createSelector(
     selectAllAsyncRequests,
-    allAsyncRequests => _.get(
-      allAsyncRequests,
-      `${actionType}.${identifier || ''}.error`) ||
-      null);
+    allAsyncRequests =>
+      (!!allAsyncRequests &&
+      !!allAsyncRequests[actionType] &&
+      !!allAsyncRequests[actionType][identifier || '']) ?
+        (allAsyncRequests[actionType][identifier || ''].error || null) :
+        null);
