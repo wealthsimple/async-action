@@ -54,3 +54,30 @@ export const makeErrorSelector = (
       !!allAsyncRequests[actionType][identifier || '']) ?
         (allAsyncRequests[actionType][identifier || ''].error || null) :
         null);
+
+/**
+ * Internal use only
+ */
+export const makeCachedResponseSelector = (
+  actionType: $Subtype<string>,
+  identifier?: string,
+  ttlSeconds?: number,
+) =>
+  createSelector(
+    selectAllAsyncRequests,
+    allAsyncRequests => {
+      const cacheRecord = !!allAsyncRequests &&
+        !!allAsyncRequests[actionType] &&
+        !!allAsyncRequests[actionType][identifier || ''] ?
+        allAsyncRequests[actionType][identifier || ''].__do_not_use__response_cache :
+        null;
+
+      if (!cacheRecord) { return null; }
+
+      if (undefined !== ttlSeconds &&
+        (cacheRecord.secondsSinceEpoch + ttlSeconds) < (Date.now() / 1000)) {
+        return null;
+      }
+
+      return cacheRecord.value;
+    });

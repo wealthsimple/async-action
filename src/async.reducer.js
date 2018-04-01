@@ -25,7 +25,12 @@ export const asyncActionReducer = (
       ...state,
       [action.type]: {
         ...state[action.type],
-        [action.meta.identifier || '']: undefined,
+        [action.meta.identifier || '']: action.meta.cache ? {
+          __do_not_use__response_cache: {
+            value: action.payload,
+            secondsSinceEpoch: Math.floor(Date.now() / 1000),
+          },
+        } : undefined,
       },
     };
     case 'ASYNC_FAILED': return {

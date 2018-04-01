@@ -1,7 +1,7 @@
 // @flow
 import type { Dispatch } from 'redux';
 import type { AsyncAction, AsyncThunk, AsyncActionOptions, SimpleAction } from './async.types';
-import { makeIsPendingSelector } from './async.selectors';
+import { makeIsPendingSelector, makeCachedResponseSelector } from './async.selectors';
 
 export const isPending = (action: $Subtype<SimpleAction>) =>
   !!action.meta && action.meta.status === 'ASYNC_PENDING';
@@ -11,6 +11,8 @@ export const isComplete = (action: $Subtype<SimpleAction>) =>
 
 export const isFailed = (action: $Subtype<SimpleAction>) =>
   !!action.meta && action.meta.status === 'ASYNC_FAILED';
+
+const _dedupedPromises = {};
 
 /**
  * Helper for API requests or other async actions.
@@ -27,11 +29,11 @@ export const isFailed = (action: $Subtype<SimpleAction>) =>
 export const createAsyncAction = <Action: SimpleAction, Payload>(
   action: Action,
   operation: AsyncThunk,
-  { identifier }: AsyncActionOptions = {},
+  { identifier, cache, ttlSeconds }: AsyncActionOptions = {},
 ): AsyncThunk => (
   dispatch: Dispatch<AsyncAction<Action, Payload>>,
   getState: Function,
-): Promise<void> => {
+): Promise<Payload> => {
   const isPendingSelector = makeIsPendingSelector(action.type, identifier);
   if (isPendingSelector(getState())) {
     dispatch({
@@ -40,7 +42,26 @@ export const createAsyncAction = <Action: SimpleAction, Payload>(
       error: null,
       meta: { status: 'ASYNC_DEDUPED', identifier },
     });
-    return Promise.resolve();
+    return _dedupedPromises[`${action.type}(${identifier || ''})`];
+  }
+
+  if (cache) {
+    const cachedResponseSelector = makeCachedResponseSelector(
+      action.type,
+      identifier,
+      ttlSeconds);
+
+    const cachedResponse = cachedResponseSelector(getState());
+    if (cachedResponse) {
+      dispatch({
+        ...action,
+        payload: cachedResponse,
+        error: null,
+        meta: { status: 'ASYNC_CACHED', identifier },
+      });
+
+      return Promise.resolve(cachedResponse);
+    }
   }
 
   dispatch({
@@ -50,14 +71,17 @@ export const createAsyncAction = <Action: SimpleAction, Payload>(
     meta: { status: 'ASYNC_PENDING', identifier },
   });
 
-  return operation(dispatch, getState)
+  const promise = operation(dispatch, getState)
     .then((result) => {
       dispatch({
         ...action,
         payload: result,
         error: null,
-        meta: { status: 'ASYNC_COMPLETE', identifier },
+        meta: { status: 'ASYNC_COMPLETE', identifier, cache },
       });
+
+      delete _dedupedPromises[`${action.type}(${identifier || ''})`];
+      return result;
     })
     .catch((error) => {
       try {
@@ -70,6 +94,11 @@ export const createAsyncAction = <Action: SimpleAction, Payload>(
       } catch (e) {
         throw e;
       }
+
+      delete _dedupedPromises[`${action.type}(${identifier || ''})`];
       throw error;
     });
+
+  _dedupedPromises[`${action.type}(${identifier || ''})`] = promise;
+  return promise;
 };

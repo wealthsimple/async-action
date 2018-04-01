@@ -7,7 +7,12 @@ export type AsyncAction<Action: SimpleAction, PayloadType> = Action & {
   payload?: ?PayloadType,
   error?: ?Error,
   meta: {
-    status: 'ASYNC_COMPLETE' | 'ASYNC_PENDING' | 'ASYNC_FAILED' | 'ASYNC_DEDUPED',
+    status:
+      'ASYNC_COMPLETE' |
+      'ASYNC_PENDING' |
+      'ASYNC_FAILED' |
+      'ASYNC_DEDUPED' |
+      'ASYNC_CACHED',
     identifier?: string,
   },
 }
@@ -19,6 +24,8 @@ export type AsyncThunk = (
 
 export type AsyncActionOptions = {
   identifier?: string;
+  cache?: boolean;
+  ttlSeconds?: number;
 };
 
 export type ErrorInfo = {
@@ -30,6 +37,10 @@ export type ErrorInfo = {
 export type AsyncActionRecord = {
   pending: boolean;
   error?: ErrorInfo;
+  __do_not_use__response_cache?: {
+    value: mixed,
+    secondsSinceEpoch: number,
+  };
 }
 
 export type AsyncActionState = {

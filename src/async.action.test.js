@@ -5,13 +5,15 @@ describe('Async Action Creators', () => {
   it('notifies when the action completes successfully', async () => {
     const mockDispatch = jest.fn();
     const mockGetState = () => ({});
+    const mockPayload = 'a payload';
 
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
-      () => Promise.resolve('a payload'),
+      () => Promise.resolve(mockPayload),
       { identifier: 'anIdentifier' });
-    await actionThunk(mockDispatch, mockGetState);
+    const payload = await actionThunk(mockDispatch, mockGetState);
 
+    expect(payload).toEqual(mockPayload);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'SOME_ACTION',
@@ -72,7 +74,7 @@ describe('Async Action Creators', () => {
 
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
-      () => Promise.resolve('foo'),
+      () => Promise.resolve('a payload'),
       { identifier: 'anIdentifier' });
     await actionThunk(mockDispatch, mockGetState);
 
@@ -146,5 +148,83 @@ describe('Async Action Creators', () => {
     expect(
       isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }))
       .toBe(true);
+  });
+
+  it('caches responses if asked to', async () => {
+    const mockPayload = 'a payload';
+    const mockDispatch = jest.fn();
+    const mockGetState = () => ({
+      asyncActions: {
+        SOME_ACTION: {
+          anIdentifier: {
+            __do_not_use__response_cache: {
+              value: mockPayload,
+            },
+          },
+        },
+      },
+    });
+
+    const mockOperation = jest.fn().mockReturnValue(Promise.resolve(mockPayload));
+    const actionThunk = createAsyncAction(
+      { type: 'SOME_ACTION' },
+      mockOperation,
+      { identifier: 'anIdentifier', cache: true });
+    const payload = await actionThunk(mockDispatch, mockGetState);
+
+    expect(payload).toEqual(mockPayload);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'SOME_ACTION',
+      meta: { status: 'ASYNC_CACHED', identifier: 'anIdentifier' },
+      payload: mockPayload,
+      error: null,
+    });
+
+    expect(mockOperation).not.toHaveBeenCalled();
+  });
+
+  it('respects a cache TTL if one is set', async () => {
+    jest.spyOn(Date, 'now').mockReturnValue(1522620263000);
+
+    const mockPayload = 'a payload';
+    const mockDispatch = jest.fn();
+    const mockGetState = () => ({
+      asyncActions: {
+        SOME_ACTION: {
+          anIdentifier: {
+            __do_not_use__response_cache: {
+              value: mockPayload,
+              secondsSinceEpoch: 1522620260, // 3 seconds ago.
+            },
+          },
+        },
+      },
+    });
+
+    const mockOperation = jest.fn().mockReturnValue(Promise.resolve(mockPayload));
+    const actionThunk = createAsyncAction(
+      { type: 'SOME_ACTION' },
+      mockOperation,
+      { identifier: 'anIdentifier', cache: true, ttlSeconds: 2 });
+    const payload = await actionThunk(mockDispatch, mockGetState);
+
+    expect(payload).toEqual(mockPayload);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'SOME_ACTION',
+      meta: { status: 'ASYNC_PENDING', identifier: 'anIdentifier' },
+      payload: null,
+      error: null,
+    });
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'SOME_ACTION',
+      meta: { status: 'ASYNC_COMPLETE', identifier: 'anIdentifier', cache: true },
+      payload: mockPayload,
+      error: null,
+    });
+
+    expect(mockOperation).toHaveBeenCalledTimes(1);
   });
 });

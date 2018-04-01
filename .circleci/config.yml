@@ -19,7 +19,7 @@ jobs:
       - *attach_code_workspace
       - run:
           name: Runs unit tests and linters
-          command: npm run test
+          command: yarn test
       - store_test_results:
           path: /tmp/test-results
 
@@ -29,20 +29,20 @@ jobs:
       - *attach_code_workspace
       - run:
           name: Checks code for known vulnerabilities
-          command: npm run retire
+          command: yarn retire
 
   checkout:
     <<: *defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-node-modules-{{ checksum "package-lock.json" }}
+          key: v1-node-modules-{{ checksum "yarn.lock" }}
       - run:
           name: Checks out code and installs npm dependencies
           command: |
-            sudo npm install
+            yarn install --no-progress --cache-folder './.yarn-cache'
       - save_cache:
-          key: v1-node-modules-{{ checksum "package-lock.json" }}
+          key: v1-node-modules-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
       - persist_to_workspace:

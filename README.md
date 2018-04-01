@@ -14,9 +14,25 @@ helping to eliminate race conditions in your code.
 
 ## API - Basic Usage:
 
+### Setup:
+
+Import this project's reducer and add it to your store:
+
+```js
+import { combineReducers } from 'redux';
+import { asyncActionReducer } from '@wealthsimple/async-action';
+
+const rootReducer = combineReducers({
+  asyncActions: asyncActionReducer,
+  // ... your other reducers
+});
+
+// ...store setup as normal.
+```
+
 ### Dispatching:
 
-You can use `createAsyncAction` to make an action from an action type and a function that returns a promise:
+You can use `createAsyncAction` to make an action from a regular action and a function that returns a promise:
 
 ```js
 import { createAsyncAction } from '@wealthsimple/async-action';
@@ -142,6 +158,74 @@ const selector = makeAllPendingSelector('FETCH_ACCOUNT_DATA', 'id1');
 // Returns an array of identifiers for this action type that are
 // currently pending.
 selector(state);
+```
+
+### API - Advanced - Composing Async Actions:
+
+### Chaining Multiple HTTP Calls in a Single Async Action:
+
+If you only need to track pending status for the two HTTP calls together, you can define it as such by hiding the complexity inside the operation:
+
+```js
+const fetchTransactionsFromFirstAccount = createAsyncAction(
+  { type: 'FETCH_TRANSACTIONS_FOR_FIRST_ACCOUNT' },
+  async () => {
+    const accounts = await http.get('/api/accounts').then(r => r.data);
+    return await http.get(`/api/accounts/${accounts[0].id}/transactions`);
+  }
+);
+```
+
+The operation can be arbitrarily complex as long as it returns a promise.
+
+### Chaining Multiple Async Actions into a Sequence:
+
+Alternately, you may want to track pending/error status for each individual step.
+
+Since the thunk returns a promise that resolves to the value of `operation`, async actions are easily composable:
+
+```js
+const fetchAccounts = () => createAsyncAction(
+  { type: 'FETCH_ACCOUNTS' },
+  () => http.get('/api/accounts').then(r => r.data));
+
+const fetchTransactionsForAccount = (accountId) => createAsyncAction(
+  { type: 'FETCH_TRANSACTIONS_FOR_ACCOUNT', accountId },
+  () => http.get(`/api/accounts/${accountId}/transactions`).then(r => r.data),
+  { identifier: accountId });
+
+const fetchTransactionsFromFirstAccount = async () => {
+  const accounts = await fetchAccounts();
+  return await fetchTransactionsForAccount(accounts[0].id);
+}
+```
+
+### API - Advanced - Caching:
+
+AsyncAction exposes simple payload caching functionality.  The intent here is to allow your components to 'fire and forget' data fetch actions; we'll take care of not making redundant HTTP requests under the hood.
+You can enable this by specifying 'cache: true' when you create the action:
+
+```js
+const getALargeDataSet = () => createAsyncAction(
+ { type: 'GET_LARGE_DATA_SET' },
+ () => http.get('/api/large_data_set'),
+ { cache: true });
+
+// The first invocation will execute `operation`, getting the data from HTTP.
+await = getALargeDataSet();
+
+// The second invocation will retrieve the payload from AsyncAction's internal cache.
+// `operation` will not be executed a second time.
+await = getALargeDataSet();
+```
+
+But what is caching without invalidation? AsyncAction also allows you to set a time-to-live value on your cache records:
+
+```js
+const getALargeDataSet = () => createAsyncAction(
+ { type: 'GET_LARGE_DATA_SET' },
+ () => http.get('/api/large_data_set'),
+ { cache: true, ttlSeconds: 10 })
 ```
 
 ## Releasing New Versions
