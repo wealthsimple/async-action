@@ -113,8 +113,8 @@ const fetchAccountData = (accountId: string) =>
 
 // ...
 
-fetchAccountData('id1');
-fetchAccountData('id2');
+dispatch(fetchAccountData('id1'));
+dispatch(fetchAccountData('id2'));
 ```
 
 This same identifier can also be used in your reducers to record return values independently for the two accounts:
@@ -195,8 +195,8 @@ const fetchTransactionsForAccount = (accountId) => createAsyncAction(
   { identifier: accountId });
 
 const fetchTransactionsFromFirstAccount = async () => {
-  const accounts = await fetchAccounts();
-  return await fetchTransactionsForAccount(accounts[0].id);
+  const accounts = await dispatch(fetchAccounts());
+  return await dispatch(fetchTransactionsForAccount(accounts[0].id));
 }
 ```
 
@@ -212,11 +212,11 @@ const getALargeDataSet = () => createAsyncAction(
  { cache: true });
 
 // The first invocation will execute `operation`, getting the data from HTTP.
-await = getALargeDataSet();
+await dispatch(getALargeDataSet());
 
 // The second invocation will retrieve the payload from AsyncAction's internal cache.
 // `operation` will not be executed a second time.
-await = getALargeDataSet();
+await dispatch(getALargeDataSet());
 ```
 
 But what is caching without invalidation? AsyncAction also allows you to set a time-to-live value on your cache records:
