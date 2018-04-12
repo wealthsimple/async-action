@@ -169,10 +169,9 @@ If you only need to track pending status for the two HTTP calls together, you ca
 ```js
 const fetchTransactionsFromFirstAccount = createAsyncAction(
   { type: 'FETCH_TRANSACTIONS_FOR_FIRST_ACCOUNT' },
-  async () => {
-    const accounts = await http.get('/api/accounts').then(r => r.data);
-    return await http.get(`/api/accounts/${accounts[0].id}/transactions`);
-  }
+  () => http.get('/api/accounts')
+    .then(r => r.data)
+    .then(accounts => http.get(`/api/accounts/${accounts[0].id}/transactions`),
 );
 ```
 
@@ -194,10 +193,11 @@ const fetchTransactionsForAccount = (accountId) => createAsyncAction(
   () => http.get(`/api/accounts/${accountId}/transactions`).then(r => r.data),
   { identifier: accountId });
 
-const fetchTransactionsFromFirstAccount = async () => {
-  const accounts = await dispatch(fetchAccounts());
-  return await dispatch(fetchTransactionsForAccount(accounts[0].id));
-}
+const fetchTransactionsFromFirstAccount = createAsyncAction(
+  { type: FETCH_TRANSACTIONS_FROM_FIRST_ACCOUNT },
+  dispatch =>
+    dispatch(fetchAccounts())
+      .then(accounts => dispatch(fetchTransactionsForAccount(accounts[0].id)));
 ```
 
 ### API - Advanced - Caching:
