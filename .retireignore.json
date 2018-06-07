@@ -8,5 +8,30 @@
     "component": "lodash",
     "version": "3.10.1",
     "justification": "Low-severity, not used at runtime, community fixes pending. See https://hackerone.com/reports/310439."
+  },
+  {
+    "component": "atob",
+    "version": "2.0.3",
+    "justification": "Low-severity, not used at runtime, community fixes pending. See https://hackerone.com/reports/321686."
+  },
+  {
+    "component": "deep-extend",
+    "version": "0.4.2",
+    "justification": "Low priority vulnerability"
+  },
+  {
+    "component": "sshpk",
+    "version": "1.13.0",
+    "justification": "Not used at runtime, awaiting new release of fsevents: https://hackerone.com/reports/319593"
+  },
+  {
+    "component": "sshpk",
+    "version": "1.13.1",
+    "justification": "Not used at runtime, awaiting new release of fsevents: https://hackerone.com/reports/319593"
+  },
+  {
+    "component": "stringstream",
+    "version": "0.0.5",
+    "justification": "Not used at runtime, awaiting new release of fsevents: https://hackerone.com/reports/321670"
   }
 ]

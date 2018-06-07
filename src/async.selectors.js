@@ -17,7 +17,9 @@ export const makeAllPendingSelector = (actionType: string): AllPendingSelector =
     selectAllAsyncRequests,
     allAsyncRequests =>
       Object.keys(allAsyncRequests[actionType] || {})
-        .filter(k => !!allAsyncRequests[actionType][k].pending));
+        .filter(k =>
+          !!allAsyncRequests[actionType][k] &&
+          !!allAsyncRequests[actionType][k].pending));
 
 /**
  * Creates a selector that returns true if the given action is pending.

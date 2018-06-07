@@ -153,7 +153,7 @@ Or if you only care whether any instance of this request is pending you can use 
 ```js
 import { makeAllPendingSelector } from '@wealthsimple/async-action';
 
-const selector = makeAllPendingSelector('FETCH_ACCOUNT_DATA', 'id1');
+const selector = makeAllPendingSelector('FETCH_ACCOUNT_DATA');
 
 // Returns an array of identifiers for this action type that are
 // currently pending.
