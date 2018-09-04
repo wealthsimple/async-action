@@ -49,6 +49,9 @@
     "transform": {
       "^.+\\.js$": "<rootDir>/jest/jest.transform.js"
     },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/.yarn-cache/"
+    ],
     "coverageReporters": [
       "json",
       "lcov",
