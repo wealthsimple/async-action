@@ -5,6 +5,7 @@
 .*/jest/html-loader.js
 .*/plop_templates/.*
 .*/plopfile.js
+.*/.yarn-cache/.*
 ../.*
 
 [include]
