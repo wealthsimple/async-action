@@ -1,16 +1,8 @@
 {
   "extends": [
     "airbnb",
-    "plugin:jasmine/recommended"
-  ],
-  "plugins": [
-    "jasmine"
   ],
   "parser": "babel-eslint",
-  "env": {
-    "jasmine": true,
-    "browser": true
-  },
   "rules": {
     "strict": "off",
     "no-underscore-dangle": "off",
@@ -29,6 +21,13 @@
   "globals": {
     "jest": true,
     "$Subtype": true,
-    "R": true
+    "R": true,
+    "describe": true,
+    "it": true,
+    "expect": true,
+    "before": true,
+    "after": true,
+    "beforeEach": true,
+    "afterEach": true
   }
 }

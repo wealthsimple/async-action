@@ -24,11 +24,10 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-flow": "^6.23.0",
-    "eslint": "^4.18.2",
+    "eslint": "^5.5.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-jasmine": "^2.10.1",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "^0.66.0",
@@ -45,6 +44,7 @@
     "reselect": ">=3.0.1"
   },
   "jest": {
+    "testEnvironment": "node",
     "setupTestFrameworkScriptFile": "<rootDir>/jest/load-libs.js",
     "transform": {
       "^.+\\.js$": "<rootDir>/jest/jest.transform.js"
