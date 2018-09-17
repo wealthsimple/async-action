@@ -7,7 +7,10 @@ export const isPending = (action: $Subtype<SimpleAction>) =>
   !!action.meta && action.meta.status === 'ASYNC_PENDING';
 
 export const isComplete = (action: $Subtype<SimpleAction>) =>
-  !!action.meta && action.meta.status === 'ASYNC_COMPLETE';
+  !!action.meta && (
+    action.meta.status === 'ASYNC_COMPLETE' ||
+    action.meta.status === 'ASYNC_CACHED'
+  );
 
 export const isFailed = (action: $Subtype<SimpleAction>) =>
   !!action.meta && action.meta.status === 'ASYNC_FAILED';

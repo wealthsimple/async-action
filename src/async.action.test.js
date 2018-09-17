@@ -119,6 +119,10 @@ describe('Async Action Creators', () => {
     expect(
       isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }))
       .toBe(false);
+
+    expect(
+      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }))
+      .toBe(false);
   });
 
 
@@ -134,6 +138,10 @@ describe('Async Action Creators', () => {
     expect(
       isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }))
       .toBe(false);
+
+    expect(
+      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }))
+      .toBe(true);
   });
 
   it('can tell when an async action has failed', () => {
