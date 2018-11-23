@@ -32,7 +32,7 @@ const _dedupedPromises = {};
 export const createAsyncAction = <Action: SimpleAction, Payload>(
   action: Action,
   operation: AsyncThunk,
-  { identifier, cache, ttlSeconds }: AsyncActionOptions = {},
+  { identifier, cache, ttlSeconds, overwriteCache }: AsyncActionOptions = {},
 ): AsyncThunk => (
     dispatch: Dispatch<AsyncAction<Action, Payload>>,
     getState: Function,
@@ -48,7 +48,7 @@ export const createAsyncAction = <Action: SimpleAction, Payload>(
       return _dedupedPromises[`${action.type}(${identifier || ''})`];
     }
 
-    if (cache) {
+    if (cache && !overwriteCache) {
       const cachedResponseSelector = makeCachedResponseSelector(
         action.type,
         identifier,

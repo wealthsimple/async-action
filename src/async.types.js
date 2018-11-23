@@ -25,6 +25,7 @@ export type AsyncThunk = (
 export type AsyncActionOptions = {
   identifier?: string;
   cache?: boolean;
+  overwriteCache?: boolean;
   ttlSeconds?: number;
 };
 

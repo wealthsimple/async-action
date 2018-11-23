@@ -13,7 +13,8 @@
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "import/prefer-default-export": "off",
     "function-paren-newline": "off",
-    "arrow-parens": "off"
+    "arrow-parens": "off",
+    "object-curly-newline": "off"
   },
   "parserOptions": {
     "sourceType": "module"

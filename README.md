@@ -227,8 +227,22 @@ But what is caching without invalidation? AsyncAction also allows you to set a t
 const getALargeDataSet = () => createAsyncAction(
  { type: 'GET_LARGE_DATA_SET' },
  () => http.get('/api/large_data_set'),
- { cache: true, ttlSeconds: 10 })
+ { cache: true, ttlSeconds: 10 });
 ```
+
+Alternately, you can tell an action not to use any preexisting cache value using the
+`overwriteCache` option:
+
+```js
+const getALargeDataSet = () => createAsyncAction(
+ { type: 'GET_LARGE_DATA_SET' },
+ () => http.get('/api/large_data_set'),
+ { cache: true, ttlSeconds: 10, overwriteCache: true });
+```
+
+This will ignore what's currently in the cache, but save the new response for
+next time.
+
 
 ## Releasing New Versions
 
