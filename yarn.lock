@@ -4432,11 +4432,12 @@ ret@~0.1.10:
   resolved "https://registry.yarnpkg.com/ret/-/ret-0.1.15.tgz#b8a4825d5bdb1fc3f6f53c2bc33f81388681c7bc"
   integrity sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==
 
-retire@^1.5.1:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/retire/-/retire-1.6.2.tgz#05f1b032f4c35d8438a4864bc7af8aa17eb135b7"
-  integrity sha512-kw1D0yrWmhylMYVmlTWgh7NnYUw9dk9dLBcDu6MOqcFrFv8KVP+2rXks7T+w4H7SEj+0m4Gg2jm6DfMJ2etmAg==
+retire@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/retire/-/retire-2.0.2.tgz#f96e1eb2b51ff15bfcbc1cfdf6503d04b720f676"
+  integrity sha512-DxSlj5Wx097jBpZo33SHVW7q1fu0i3ylvbgAN4G2IEMbLvOIvsIyZB7DOQ3Riky43jduIl3j8T0YyMI5FjOspg==
   dependencies:
+    colors "^1.1.2"
     commander "2.5.x"
     read-installed "^4.0.3"
     request "~2.x.x"
