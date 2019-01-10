@@ -60,3 +60,17 @@ workflows:
       - test:
           requires:
             - checkout
+
+  security-audit:
+    triggers:
+      - schedule:
+          # 11:35am UTC: 6:35am EST / 7:35am EDT
+          cron: "35 11 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - checkout
+      - retirejs:
+          requires:
+            - checkout
