@@ -38,11 +38,6 @@
     "reselect": "^4.0.0",
     "retire": "^2.0.2"
   },
-  "peerDependencies": {
-    "redux": ">=3.7.2",
-    "redux-thunk": ">=2.2.0",
-    "reselect": ">=3.0.1"
-  },
   "jest": {
     "testEnvironment": "node",
     "setupTestFrameworkScriptFile": "<rootDir>/jest/load-libs.js",
