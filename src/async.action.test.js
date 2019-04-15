@@ -1,5 +1,10 @@
 // @flow
-import { createAsyncAction, isPending, isComplete, isFailed } from './async.action';
+import {
+  createAsyncAction,
+  isPending,
+  isComplete,
+  isFailed,
+} from './async.action';
 
 describe('Async Action Creators', () => {
   it('notifies when the action completes successfully', async () => {
@@ -10,7 +15,8 @@ describe('Async Action Creators', () => {
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
       () => Promise.resolve(mockPayload),
-      { identifier: 'anIdentifier' });
+      { identifier: 'anIdentifier' },
+    );
     const payload = await actionThunk(mockDispatch, mockGetState);
 
     expect(payload).toEqual(mockPayload);
@@ -38,7 +44,8 @@ describe('Async Action Creators', () => {
       const actionThunk = createAsyncAction(
         { type: 'SOME_ACTION' },
         () => Promise.reject(new Error('BOOM')),
-        { identifier: 'anIdentifier' });
+        { identifier: 'anIdentifier' },
+      );
       await actionThunk(mockDispatch, mockGetState);
     } catch (err) {
       expect(err).toEqual(new Error('BOOM'));
@@ -75,7 +82,8 @@ describe('Async Action Creators', () => {
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
       () => Promise.resolve('a payload'),
-      { identifier: 'anIdentifier' });
+      { identifier: 'anIdentifier' },
+    );
     await actionThunk(mockDispatch, mockGetState);
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
@@ -87,18 +95,22 @@ describe('Async Action Creators', () => {
     });
   });
 
-  it('doesn\'t swallow errors that happen while notifying', async () => {
-    const mockDispatch = jest.fn()
+  it("doesn't swallow errors that happen while notifying", async () => {
+    const mockDispatch = jest
+      .fn()
       // First call: pretend that set to pending succeeds.
       .mockImplementationOnce(_a => _a)
       // Second call: pretend dispatching the success case explodes in a reducer somewhere.
-      .mockImplementationOnce(((_a) => { throw new Error('DISPATCH BOOM'); }));
+      .mockImplementationOnce(_a => {
+        throw new Error('DISPATCH BOOM');
+      });
     const mockGetState = () => ({});
 
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
       () => Promise.resolve('foo'),
-      { identifier: 'anIdentifier' });
+      { identifier: 'anIdentifier' },
+    );
 
     try {
       await actionThunk(mockDispatch, mockGetState);
@@ -109,53 +121,52 @@ describe('Async Action Creators', () => {
 
   it('can tell when an async action is pending', () => {
     expect(
-      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_PENDING' } }))
-      .toBe(true);
+      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_PENDING' } }),
+    ).toBe(true);
 
     expect(
-      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_COMPLETE' } }))
-      .toBe(false);
+      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_COMPLETE' } }),
+    ).toBe(false);
 
     expect(
-      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }))
-      .toBe(false);
+      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }),
+    ).toBe(false);
 
     expect(
-      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }))
-      .toBe(false);
+      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }),
+    ).toBe(false);
   });
-
 
   it('can tell when an async action completed successfully', () => {
     expect(
-      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_PENDING' } }))
-      .toBe(false);
+      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_PENDING' } }),
+    ).toBe(false);
 
     expect(
-      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_COMPLETE' } }))
-      .toBe(true);
+      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_COMPLETE' } }),
+    ).toBe(true);
 
     expect(
-      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }))
-      .toBe(false);
+      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }),
+    ).toBe(false);
 
     expect(
-      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }))
-      .toBe(true);
+      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }),
+    ).toBe(true);
   });
 
   it('can tell when an async action has failed', () => {
     expect(
-      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_PENDING' } }))
-      .toBe(false);
+      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_PENDING' } }),
+    ).toBe(false);
 
     expect(
-      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_COMPLETE' } }))
-      .toBe(false);
+      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_COMPLETE' } }),
+    ).toBe(false);
 
     expect(
-      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }))
-      .toBe(true);
+      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }),
+    ).toBe(true);
   });
 
   it('caches responses if asked to', async () => {
@@ -173,11 +184,14 @@ describe('Async Action Creators', () => {
       },
     });
 
-    const mockOperation = jest.fn().mockReturnValue(Promise.resolve(mockPayload));
+    const mockOperation = jest
+      .fn()
+      .mockReturnValue(Promise.resolve(mockPayload));
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
       mockOperation,
-      { identifier: 'anIdentifier', cache: true });
+      { identifier: 'anIdentifier', cache: true },
+    );
     const payload = await actionThunk(mockDispatch, mockGetState);
 
     expect(payload).toEqual(mockPayload);
@@ -210,11 +224,14 @@ describe('Async Action Creators', () => {
       },
     });
 
-    const mockOperation = jest.fn().mockReturnValue(Promise.resolve(mockPayload));
+    const mockOperation = jest
+      .fn()
+      .mockReturnValue(Promise.resolve(mockPayload));
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
       mockOperation,
-      { identifier: 'anIdentifier', cache: true, ttlSeconds: 2 });
+      { identifier: 'anIdentifier', cache: true, ttlSeconds: 2 },
+    );
     const payload = await actionThunk(mockDispatch, mockGetState);
 
     expect(payload).toEqual(mockPayload);
@@ -228,7 +245,11 @@ describe('Async Action Creators', () => {
 
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'SOME_ACTION',
-      meta: { status: 'ASYNC_COMPLETE', identifier: 'anIdentifier', cache: true },
+      meta: {
+        status: 'ASYNC_COMPLETE',
+        identifier: 'anIdentifier',
+        cache: true,
+      },
       payload: mockPayload,
       error: null,
     });

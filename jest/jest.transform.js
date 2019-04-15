@@ -4,18 +4,13 @@
 // $FlowFixMe
 module.exports = require('babel-jest').createTransformer({
   presets: [
-    ['es2015', { modules: false }],
-    'flow',
+    '@babel/env',
+    '@babel/flow',
   ],
   plugins: [
-    'transform-object-assign',
-    'transform-class-properties',
-    'transform-object-rest-spread',
-    'transform-async-to-generator',
+    '@babel/plugin-proposal-object-rest-spread',
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-transform-async-to-generator',
+    'dynamic-import-node',
   ],
-  env: {
-    test: {
-      plugins: ['transform-es2015-modules-commonjs'],
-    },
-  },
 });

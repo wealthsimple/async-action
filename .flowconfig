@@ -13,3 +13,11 @@
 [libs]
 
 [options]
+
+[lints]
+all=error
+inexact-spread=warn
+deprecated-type=warn
+sketchy-null-bool=off
+dynamic-export=off
+deprecated-utility=off

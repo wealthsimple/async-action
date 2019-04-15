@@ -1,7 +1,7 @@
 defaults: &defaults
   working_directory: /home/circle/wealthsimple
   docker:
-    - image: wealthsimple/node:9.11.1-docker
+    - image: wealthsimple/node:10.12.0-docker
       environment:
         JUNIT_REPORT_PATH: /tmp/test-results
         JUNIT_REPORT_NAME: test-results.xml
