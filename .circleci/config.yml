@@ -1,7 +1,7 @@
 defaults: &defaults
   working_directory: /home/circle/wealthsimple
   docker:
-    - image: wealthsimple/node:10.12.0-docker
+    - image: wealthsimple/node:10.15.3-ci
       environment:
         JUNIT_REPORT_PATH: /tmp/test-results
         JUNIT_REPORT_NAME: test-results.xml
@@ -13,15 +13,41 @@ references:
 
 version: 2
 jobs:
+  static_checks:
+    <<: *defaults
+    steps:
+      - *attach_code_workspace
+      - run:
+          name: Run eslint
+          command: yarn lint:js
+      - run:
+          name: Check flow types
+          command: yarn flow
+      - run:
+          name: Check for circular dependencies
+          command: yarn cdc
+
   test:
     <<: *defaults
     steps:
       - *attach_code_workspace
       - run:
-          name: Runs unit tests and linters
-          command: yarn test
+          name: Run unit tests
+          command: yarn test:ci
+          environment:
+            JEST_JUNIT_OUTPUT: "/tmp/test-results/jest/results.xml"
       - store_test_results:
           path: /tmp/test-results
+
+  coverage:
+    <<: *defaults
+    steps:
+      - *attach_code_workspace
+      - run:
+          name: Generate coverage
+          command: mkdir -p /tmp/coverage-results/jest && yarn test:coverage
+          environment:
+            JEST_JUNIT_OUTPUT: "/tmp/coverage-results/jest/results.xml"
 
   retirejs:
     <<: *defaults
@@ -57,9 +83,15 @@ workflows:
       - retirejs:
           requires:
             - checkout
+      - static_checks:
+          requires:
+            - checkout
       - test:
           requires:
             - checkout
+      - coverage:
+          requires:
+            - test
 
   security-audit:
     triggers:

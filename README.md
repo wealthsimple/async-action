@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/wealthsimple/async-action/badge.svg?branch=master&t=FmpSiU)](https://coveralls.io/github/wealthsimple/async-action?branch=master)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=wealthsimple/async-action&identifier=123380773)](https://dependabot.com)
 
 # An Asynchronous Action Definition for Redux
@@ -8,11 +9,11 @@ This lib is intended to be used with [redux-thunk](https://github.com/gaearon/re
 
 ## Why would I use this?
 
-* It reduces a lot of the boiler plate associated with HTTP calls in redux
-* It enforces a standard way of tracking progress and errors in the store.
-* It can deduplicate actions that perform the same operation simultaneously,
-helping to eliminate race conditions in your code.
-* It provides a consistent pattern for querying whether things are in progress or not.
+- It reduces a lot of the boiler plate associated with HTTP calls in redux
+- It enforces a standard way of tracking progress and errors in the store.
+- It can deduplicate actions that perform the same operation simultaneously,
+  helping to eliminate race conditions in your code.
+- It provides a consistent pattern for querying whether things are in progress or not.
 
 ## API - Basic Usage:
 
@@ -68,7 +69,7 @@ const accountDataReducer = (state = {}, action) => {
   }
 
   return state;
-}
+};
 ```
 
 ### Selecting:
@@ -78,7 +79,7 @@ This library also provides helpers getting information about ongoing actions: `m
 ```js
 const selectAccountsFetchPending = makeIsPendingSelector(FETCH_ACCOUNTS);
 
-selectAccountsPending(state)
+selectAccountsPending(state);
 ```
 
 ```js
@@ -86,7 +87,7 @@ const selectAccountsFetchFailed = makeErrorSelector(FETCH_ACCOUNTS);
 
 // If an error happened, this will give you an object containing the error's
 // name, message, and stack trace.
-selectAccountsFetchFailed(state)
+selectAccountsFetchFailed(state);
 ```
 
 ## API - Advanced - Disambiguating Actions
@@ -97,9 +98,9 @@ By default, there can only be one instance of an AsyncAction with a particular t
 
 ```js
 const fetchAccountData = (accountId: string) =>
-  createAsyncAction(
-    { type: 'FETCH_ACCOUNT_DATA' },
-    () => http.get(`/api/accounts/${accountId}`));
+  createAsyncAction({ type: 'FETCH_ACCOUNT_DATA' }, () =>
+    http.get(`/api/accounts/${accountId}`),
+  );
 ```
 
 This works fine until you want to fetch data for two accounts at the same time. The deduplication, pending states, and error tracking will get mixed up and you will have race conditions. To fix this, use the `identifier` option to disamibuate the requests:
@@ -111,7 +112,8 @@ const fetchAccountData = (accountId: string) =>
   createAsyncAction(
     { type: 'FETCH_ACCOUNT_DATA' },
     () => http.get(`/api/accounts/${accountId}`),
-    { identifier: accountId });
+    { identifier: accountId },
+  );
 
 // ...
 
@@ -204,14 +206,16 @@ const fetchTransactionsFromFirstAccount = createAsyncAction(
 
 ### API - Advanced - Caching:
 
-AsyncAction exposes simple payload caching functionality.  The intent here is to allow your components to 'fire and forget' data fetch actions; we'll take care of not making redundant HTTP requests under the hood.
+AsyncAction exposes simple payload caching functionality. The intent here is to allow your components to 'fire and forget' data fetch actions; we'll take care of not making redundant HTTP requests under the hood.
 You can enable this by specifying 'cache: true' when you create the action:
 
 ```js
-const getALargeDataSet = () => createAsyncAction(
- { type: 'GET_LARGE_DATA_SET' },
- () => http.get('/api/large_data_set'),
- { cache: true });
+const getALargeDataSet = () =>
+  createAsyncAction(
+    { type: 'GET_LARGE_DATA_SET' },
+    () => http.get('/api/large_data_set'),
+    { cache: true },
+  );
 
 // The first invocation will execute `operation`, getting the data from HTTP.
 await dispatch(getALargeDataSet());
@@ -224,28 +228,31 @@ await dispatch(getALargeDataSet());
 But what is caching without invalidation? AsyncAction also allows you to set a time-to-live value on your cache records:
 
 ```js
-const getALargeDataSet = () => createAsyncAction(
- { type: 'GET_LARGE_DATA_SET' },
- () => http.get('/api/large_data_set'),
- { cache: true, ttlSeconds: 10 });
+const getALargeDataSet = () =>
+  createAsyncAction(
+    { type: 'GET_LARGE_DATA_SET' },
+    () => http.get('/api/large_data_set'),
+    { cache: true, ttlSeconds: 10 },
+  );
 ```
 
 Alternately, you can tell an action not to use any preexisting cache value using the
 `overwriteCache` option:
 
 ```js
-const getALargeDataSet = () => createAsyncAction(
- { type: 'GET_LARGE_DATA_SET' },
- () => http.get('/api/large_data_set'),
- { cache: true, ttlSeconds: 10, overwriteCache: true });
+const getALargeDataSet = () =>
+  createAsyncAction(
+    { type: 'GET_LARGE_DATA_SET' },
+    () => http.get('/api/large_data_set'),
+    { cache: true, ttlSeconds: 10, overwriteCache: true },
+  );
 ```
 
 This will ignore what's currently in the cache, but save the new response for
 next time.
 
-
 ## Releasing New Versions
 
-1) Update the version in package.json and yarn.lock
-2) Merge these changes to master
-4) Create a github release with `vX.Y.Z` where `X.Y.Z` is the number from package.json. Please follow semantic versioning.
+1. Update the version in package.json and yarn.lock
+2. Merge these changes to master
+3. Create a github release with `vX.Y.Z` where `X.Y.Z` is the number from package.json. Please follow semantic versioning.
