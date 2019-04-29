@@ -32,15 +32,6 @@ import { createAsyncAction } from '@wealthsimple/async-action';
 import { createAsyncAction } from '@wealthsimple/async-action/dist';
 ```
 
-**Browser:**
-
-```html
-<script
-  type="text/javascript"
-  src="https://npmcdn.com/@wealthsimple/async-action/dist.js"
-></script>
-```
-
 ## API - Basic Usage:
 
 ### Setup:
