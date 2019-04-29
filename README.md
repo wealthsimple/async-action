@@ -15,6 +15,32 @@ This lib is intended to be used with [redux-thunk](https://github.com/gaearon/re
   helping to eliminate race conditions in your code.
 - It provides a consistent pattern for querying whether things are in progress or not.
 
+## How to use it?
+
+We use [flow](http://flowtype.org) for static typings internally. By default, we've exposed the ES2017/Flow source code, assuming you want to customize your own babel setup. However if you're not into Flow, we also expose an ES5 UMD build in `dist.js`:
+
+**Flow:**
+
+```js
+// @flow
+import { createAsyncAction } from '@wealthsimple/async-action';
+```
+
+**Non-Flow ES6:**
+
+```js
+import { createAsyncAction } from '@wealthsimple/async-action/dist';
+```
+
+**Browser:**
+
+```html
+<script
+  type="text/javascript"
+  src="https://npmcdn.com/@wealthsimple/async-action/dist.js"
+></script>
+```
+
 ## API - Basic Usage:
 
 ### Setup:

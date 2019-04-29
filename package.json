@@ -1,6 +1,6 @@
 {
   "name": "@wealthsimple/async-action",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -12,11 +12,14 @@
     "test:watch": "jest --watch",
     "retire": "retire --ignore dist",
     "prettier": "prettier --write './+(src)/**/*.js'",
-    "cdc": "madge --no-spinner --exclude .yarn-cache --circular src"
+    "cdc": "madge --no-spinner --exclude .yarn-cache --circular src",
+    "build": "yarn babel -o dist.js --ignore **/test.js src",
+    "prepublish": "yarn lint:js && yarn test && yarn cdc && yarn build"
   },
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
@@ -61,7 +64,7 @@
       "<rootDir>/jest/load-libs.js"
     ],
     "transform": {
-      "^.+\\.js$": "<rootDir>/jest/jest.transform.js"
+      "^.+\\.js$": "babel-jest"
     },
     "modulePathIgnorePatterns": [
       "<rootDir>/.yarn-cache/"
