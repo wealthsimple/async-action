@@ -34,14 +34,21 @@ export const makeAllPendingSelector = (
 export const makeIsPendingSelector = (
   actionType: string,
   identifier?: string,
+  initialValue?: boolean = false,
 ): IsPendingSelector =>
   createSelector(
     selectAllAsyncRequests,
-    allAsyncRequests =>
-      !!allAsyncRequests &&
-      !!allAsyncRequests[actionType] &&
-      !!allAsyncRequests[actionType][identifier || ''] &&
-      !!allAsyncRequests[actionType][identifier || ''].pending,
+    allAsyncRequests => {
+      if (!!allAsyncRequests && !allAsyncRequests[actionType]) {
+        return initialValue;
+      }
+      return (
+        !!allAsyncRequests &&
+        !!allAsyncRequests[actionType] &&
+        !!allAsyncRequests[actionType][identifier || ''] &&
+        !!allAsyncRequests[actionType][identifier || ''].pending
+      );
+    },
   );
 
 /**
