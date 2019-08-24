@@ -1669,12 +1669,7 @@ commander@2.5.x:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.5.1.tgz#23c61f6e47be143cc02e7ad4bb1c47f5cd5a2883"
   integrity sha1-I8Yfbke+FDzALnrUuxxH9c1aKIM=
 
-commander@^2.11.0:
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
-  integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
-
-commander@^2.13.0, commander@^2.15.1, commander@^2.16.0, commander@^2.19.0, commander@^2.8.1:
+commander@^2.11.0, commander@^2.13.0, commander@^2.15.1, commander@^2.16.0, commander@^2.19.0, commander@^2.8.1:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
   integrity sha512-7j2y+40w61zy6YC2iRNpUe/NwhNyoXrYpHMrSunaMG64nRnaf96zO/KMQR4OyN/UnE5KLyEBnKHd4aG3rskjpQ==
@@ -5673,9 +5668,9 @@ ret@~0.1.10:
   integrity sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==
 
 retire@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/retire/-/retire-2.0.2.tgz#f96e1eb2b51ff15bfcbc1cfdf6503d04b720f676"
-  integrity sha512-DxSlj5Wx097jBpZo33SHVW7q1fu0i3ylvbgAN4G2IEMbLvOIvsIyZB7DOQ3Riky43jduIl3j8T0YyMI5FjOspg==
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/retire/-/retire-2.0.3.tgz#93abe4ae012486c405534bc7680d9d836c00218e"
+  integrity sha512-HeAGDZ2iLENYerTM/sfs2Rcrk++WaLX76RpP89ARTmlkIAAWrhC8KcEfi845czV22pLXAlcnmgz9xESGafjXBg==
   dependencies:
     colors "^1.1.2"
     commander "2.5.x"
