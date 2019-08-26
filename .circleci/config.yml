@@ -49,13 +49,13 @@ jobs:
           environment:
             JEST_JUNIT_OUTPUT: "/tmp/coverage-results/jest/results.xml"
 
-  retirejs:
+  security:
     <<: *defaults
     steps:
       - *attach_code_workspace
       - run:
           name: Checks code for known vulnerabilities
-          command: yarn retire
+          command: yarn audit
 
   checkout:
     <<: *defaults
@@ -80,7 +80,7 @@ workflows:
   build-and-deploy:
     jobs:
       - checkout
-      - retirejs:
+      - security:
           requires:
             - checkout
       - static_checks:
@@ -103,6 +103,6 @@ workflows:
               only: master
     jobs:
       - checkout
-      - retirejs:
+      - security:
           requires:
             - checkout

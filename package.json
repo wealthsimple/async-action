@@ -10,7 +10,6 @@
     "test:ci": "jest --coverage --runInBand",
     "test:coverage": "jest --coverage --runInBand --reporters=jest-junit --coverageReporters=text-lcov | coveralls",
     "test:watch": "jest --watch",
-    "retire": "retire --ignore dist",
     "prettier": "prettier --write './+(src)/**/*.js'",
     "cdc": "madge --no-spinner --exclude .yarn-cache --circular src",
     "prebuild": "rm -rf dist",
@@ -53,8 +52,7 @@
     "pretty-quick": "^1.10.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "reselect": "^4.0.0",
-    "retire": "^2.0.2"
+    "reselect": "^4.0.0"
   },
   "resolutions": {
     "handlebars": "^4.1.2",
