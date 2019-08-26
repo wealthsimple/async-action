@@ -78,7 +78,7 @@ export const makeCachedResponseSelector = (
   identifier?: string,
   ttlSeconds?: number,
 ) =>
-  createSelector<*, *, *, *>(
+  createSelector(
     selectAllAsyncRequests,
     allAsyncRequests => {
       const cacheRecord =
