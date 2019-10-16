@@ -3,9 +3,17 @@ import type { Dispatch } from 'redux';
 
 export type SimpleAction = { type: $Subtype<string> };
 
+// Intentionally recursive type.
+// eslint-disable-next-line no-use-before-define
+type JSONLiteral = JSONObject | JSONArray | string | number;
+type JSONObject = {
+  [string]: JSONLiteral,
+};
+type JSONArray = JSONLiteral[];
+
 export type AsyncAction<Action: SimpleAction, PayloadType> = Action & {
   payload?: ?PayloadType,
-  error?: ?Error,
+  error?: ?(JSONLiteral | Error),
   meta: {
     status:
       | 'ASYNC_COMPLETE'
