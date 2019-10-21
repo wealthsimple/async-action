@@ -1,108 +1,39 @@
-defaults: &defaults
-  working_directory: /home/circle/wealthsimple
-  docker:
-    - image: wealthsimple/node:10.15.3-ci
-      environment:
-        JUNIT_REPORT_PATH: /tmp/test-results
-        JUNIT_REPORT_NAME: test-results.xml
+version: 2.1
 
-references:
-  attach_code_workspace: &attach_code_workspace
-    attach_workspace:
-      at: /home/circle/wealthsimple
-
-version: 2
-jobs:
-  static_checks:
-    <<: *defaults
-    steps:
-      - *attach_code_workspace
-      - run:
-          name: Run eslint
-          command: yarn lint:js
-      - run:
-          name: Check flow types
-          command: yarn flow
-      - run:
-          name: Check for circular dependencies
-          command: yarn cdc
-
-  test:
-    <<: *defaults
-    steps:
-      - *attach_code_workspace
-      - run:
-          name: Run unit tests
-          command: yarn test:ci
-          environment:
-            JEST_JUNIT_OUTPUT: "/tmp/test-results/jest/results.xml"
-      - store_test_results:
-          path: /tmp/test-results
-
-  coverage:
-    <<: *defaults
-    steps:
-      - *attach_code_workspace
-      - run:
-          name: Generate coverage
-          command: mkdir -p /tmp/coverage-results/jest && yarn test:coverage
-          environment:
-            JEST_JUNIT_OUTPUT: "/tmp/coverage-results/jest/results.xml"
-
-  security:
-    <<: *defaults
-    steps:
-      - *attach_code_workspace
-      - run:
-          name: Checks code for known vulnerabilities
-          command: yarn audit
-
-  checkout:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-node-modules-{{ checksum "yarn.lock" }}
-      - run:
-          name: Checks out code and installs npm dependencies
-          command: |
-            yarn install --no-progress --cache-folder './.yarn-cache'
-      - save_cache:
-          key: v1-node-modules-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
-      - persist_to_workspace:
-          root: .
-          paths: .
+orbs:
+  micro-app: wealthsimple/micro-app@dev:master
 
 workflows:
-  version: 2
+  version: 2.1
   build-and-deploy:
     jobs:
-      - checkout
-      - security:
+      - micro-app/checkout:
+          name: checkout
+      - micro-app/security:
+          name: security
           requires:
             - checkout
-      - static_checks:
+      - micro-app/test:
+          name: test
           requires:
             - checkout
-      - test:
+      - micro-app/coverage:
+          name: coverage
           requires:
             - checkout
-      - coverage:
+      - micro-app/static_checks:
+          name: static_checks
           requires:
-            - test
-
-  security-audit:
-    triggers:
-      - schedule:
-          # 11:35am UTC: 6:35am EST / 7:35am EDT
-          cron: "35 11 * * *"
+            - checkout
+      - micro-app/semantic_release:
+          name: semantic_release
+          context: wealthsimple
           filters:
             branches:
               only: master
-    jobs:
-      - checkout
-      - security:
           requires:
             - checkout
+            - static_checks
+            - security
+            - test
+            - coverage
