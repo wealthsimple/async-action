@@ -37,14 +37,14 @@ const _dedupedPromises = {};
  * The optional 'options' parameter gives you more control:
  *   * identifier can be used to disambiguate two instances of the same action.
  */
-export const createAsyncAction = <Action: SimpleAction, Payload>(
-  action: Action,
-  operation: AsyncThunk,
+export const createAsyncAction = <AAction: AsyncAction<SimpleAction, *>>(
+  action: $Diff<AAction, { meta: mixed, error: mixed, payload: mixed }>,
+  operation: AsyncThunk<$PropertyType<AAction, 'payload'>>,
   { identifier, cache, ttlSeconds, overwriteCache }: AsyncActionOptions = {},
-): AsyncThunk => (
-  dispatch: Dispatch<AsyncAction<Action, Payload>>,
+): AsyncThunk<$PropertyType<AAction, 'payload'>> => (
+  dispatch: Dispatch<AAction>,
   getState: GetState<*>,
-): Promise<Payload> => {
+): Promise<$PropertyType<AAction, 'payload'>> => {
   const isPendingSelector = makeIsPendingSelector(action.type, identifier);
   if (isPendingSelector(getState())) {
     dispatch({

@@ -45,10 +45,10 @@ export type AAction<ActionType: string, PayloadType, ActionFields = {}> = {
 
 export type GetState<State> = () => State;
 
-export type AsyncThunk = (
+export type AsyncThunk<Payload> = (
   dispatch: Dispatch<*>,
   getState: GetState<*>,
-) => Promise<*>;
+) => Promise<Payload>;
 
 export type AsyncActionOptions = {
   identifier?: string,

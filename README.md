@@ -183,7 +183,7 @@ selector(state);
 
 ### API - Advanced - Composing Async Actions:
 
-### Chaining Multiple HTTP Calls in a Single Async Action:
+#### Chaining Multiple HTTP Calls in a Single Async Action:
 
 If you only need to track pending status for the two HTTP calls together, you can define it as such by hiding the complexity inside the operation:
 
@@ -198,7 +198,7 @@ const fetchTransactionsFromFirstAccount = createAsyncAction(
 
 The operation can be arbitrarily complex as long as it returns a promise.
 
-### Chaining Multiple Async Actions into a Sequence:
+#### Chaining Multiple Async Actions into a Sequence:
 
 Alternately, you may want to track pending/error status for each individual step.
 
@@ -268,8 +268,130 @@ const getALargeDataSet = () =>
 This will ignore what's currently in the cache, but save the new response for
 next time.
 
+## A Word About Static Typing
+
+AsyncAction is designed to be used with FlowType for static type checking. One common pattern for doing this is to define your action types as string literal types:
+
+```js
+type MySimpleAction = { type: 'MY_SIMPLE_ACTION' };
+```
+
+Your relevant action creator declares this as a return type to prevent you from making typos with the action type field:
+
+```js
+// Works:
+const createMySimpleAction = (): MySimpleAction => ({
+  type: 'MY_SIMPLE_ACTION',
+});
+```
+
+```js
+// Does not work: Flow catches the typo:
+const createMySimpleAction = (): MySimpleAction => ({
+  type: 'MY_SIIIIMPLE_ACTION',
+});
+```
+
+This also extends to Reducers:
+
+```js
+type MySimpleAction = { type: 'MY_SIMPLE_ACTION' };
+type MySimpleAction2 = { type: 'MY_SIMPLE_ACTION_2' };
+
+type MyAction = MySimpleAction | MySimpleAction2;
+
+const myReducer = (state: MyState, action: MyAction) => {
+  switch (action.type) {
+    // Works, with type refinement.
+    case 'MY_SIMPLE_ACTION':
+      // handleMySimpleAction: (state: MyState, action: MySimpleAction);
+      return handleMySimpleAction(state, action);
+
+    // Works, with type refinement.
+    case 'MY_SIMPLE_ACTION_2':
+      // handleMySimpleAction: (state: MyState, action: MySimpleAction2);
+      return handleMySimpleAction2(state, action);
+
+    // Flow catches this: 'TOTALLY_BOGUS_STRING' isn't one of the members of
+    // MyAction.
+    case 'TOTALLY_BOGUS_STRING':
+      return handleMySimpleAction(state, action);
+  }
+
+  return state;
+};
+```
+
+No need for a constants file: static type checking has got your back!
+
+The good news is, you can also do this with AsyncAction:
+
+```js
+import { type AAction, createAsyncAction } from '@wealthsimple/async-action';
+
+type SimplePayload = {| message: string |};
+type MyAsyncAction = AAction<'MY_ASYNC_ACTION', SimplePayload>;
+```
+
+Because `createAsyncAction` actually returns a Thunk, it's not quite as simple as declaring a return type on the action creator. However we can get type checking using a generic argument:
+
+```ts
+// Works:
+const myAsyncAction = () =>
+  createAsyncAction<MyAsyncAction>('MY_ASYNC_ACTION', () =>
+    Promise.resolve({ message: 'OHAI' }),
+  );
+```
+
+```ts
+// Does not work: action type is wrong.
+const myAsyncAction = () =>
+  createAsyncAction<MyAsyncAction>('MY_AAASYNC_ACTION', () =>
+    Promise.resolve({ message: 'OHAI' }),
+  );
+```
+
+```ts
+// Does not work: operation response does match the action's payload type.
+const myAsyncAction = () =>
+  createAsyncAction<MyAsyncAction>('MY_ASYNC_ACTION', () =>
+    Promise.resolve({ count: 42 }),
+  );
+```
+
+The reducer also acts the same as before:
+
+```js
+type SimplePayload = {| message: string |};
+type SimplePayload2 = {| name: string |};
+
+type MyAsyncAction = AAction<'MY_ASYNC_ACTION', SimplePayload>;
+type MyAsyncAction2 = AACtion<'MY_ASYNC_ACTION_2', SimplePayload2>;
+
+type MyAction = MyAsyncAction | MyAsyncAction;
+
+const myReducer = (state: MyState, action: MyAction) => {
+  switch (action.type) {
+    // Works, with type refinement.
+    case 'MY_ASYNC_ACTION':
+      // handleMySimpleAction: (state: MyState, action: MyAsyncAction);
+      return handleMyAsyncAction(state, action);
+
+    // Works, with type refinement.
+    case 'MY_ASYNC_ACTION_2':
+      // handleMySimpleAction: (state: MyState, action: MyAsyncAction2);
+      return handleMyAsyncAction2(state, action);
+
+    // Flow catches this: 'TOTALLY_BOGUS_STRING' isn't one of the members of
+    // MyAction.
+    case 'TOTALLY_BOGUS_STRING':
+      return handleMyAsyncAction(state, action);
+  }
+
+  return state;
+};
+```
+
 ## Releasing New Versions
 
-1. Update the version in package.json and yarn.lock
-2. Merge these changes to master
-3. Create a github release with `vX.Y.Z` where `X.Y.Z` is the number from package.json. Please follow semantic versioning.
+This repo uses [semantic-release](https://github.com/semantic-release/semantic-release). Follow the commit messages conventions and releases will be made for you on merge to master.
