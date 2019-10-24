@@ -1,5 +1,5 @@
 // @flow
-import type { Dispatch } from 'redux';
+import type { DispatchAPI } from 'redux';
 
 export type SimpleAction = { type: $Subtype<string> };
 
@@ -46,7 +46,7 @@ export type AAction<ActionType: string, PayloadType, ActionFields = {}> = {
 export type GetState<State> = () => State;
 
 export type AsyncThunk<Payload> = (
-  dispatch: Dispatch<*>,
+  dispatch: DispatchAPI<*>,
   getState: GetState<*>,
 ) => Promise<Payload>;
 

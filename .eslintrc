@@ -21,6 +21,7 @@
     "jest": true,
     "$Subtype": true,
     "$Diff": true,
+    "$NonMaybeType": true,
     "$PropertyType": true,
     "describe": true,
     "it": true,

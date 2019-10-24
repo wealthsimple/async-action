@@ -1,5 +1,5 @@
 // @flow
-import type { Dispatch } from 'redux';
+import type { DispatchAPI } from 'redux';
 import type {
   AsyncAction,
   AsyncThunk,
@@ -41,76 +41,81 @@ export const createAsyncAction = <AAction: AsyncAction<SimpleAction, *>>(
   action: $Diff<AAction, { meta: mixed, error: mixed, payload: mixed }>,
   operation: AsyncThunk<$PropertyType<AAction, 'payload'>>,
   { identifier, cache, ttlSeconds, overwriteCache }: AsyncActionOptions = {},
-): AsyncThunk<$PropertyType<AAction, 'payload'>> => (
-  dispatch: Dispatch<AAction>,
-  getState: GetState<*>,
-): Promise<$PropertyType<AAction, 'payload'>> => {
-  const isPendingSelector = makeIsPendingSelector(action.type, identifier);
-  if (isPendingSelector(getState())) {
+): AsyncThunk<$NonMaybeType<$PropertyType<AAction, 'payload'>>> => {
+  // We are returning a Thunk (a function that itself dispatches actions).
+  const thunk = (
+    dispatch: DispatchAPI<AAction>,
+    getState: GetState<*>,
+  ): Promise<$PropertyType<AAction, 'payload'>> => {
+    const isPendingSelector = makeIsPendingSelector(action.type, identifier);
+    if (isPendingSelector(getState())) {
+      dispatch({
+        ...action,
+        payload: null,
+        error: null,
+        meta: { status: 'ASYNC_DEDUPED', identifier },
+      });
+      return _dedupedPromises[`${action.type}(${identifier || ''})`];
+    }
+
+    if (cache && !overwriteCache) {
+      const cachedResponseSelector = makeCachedResponseSelector(
+        action.type,
+        identifier,
+        ttlSeconds,
+      );
+
+      const cachedResponse = cachedResponseSelector(getState());
+      if (cachedResponse) {
+        dispatch({
+          ...action,
+          payload: cachedResponse,
+          error: null,
+          meta: { status: 'ASYNC_CACHED', identifier },
+        });
+
+        return Promise.resolve(cachedResponse);
+      }
+    }
+
     dispatch({
       ...action,
       payload: null,
       error: null,
-      meta: { status: 'ASYNC_DEDUPED', identifier },
+      meta: { status: 'ASYNC_PENDING', identifier },
     });
-    return _dedupedPromises[`${action.type}(${identifier || ''})`];
-  }
 
-  if (cache && !overwriteCache) {
-    const cachedResponseSelector = makeCachedResponseSelector(
-      action.type,
-      identifier,
-      ttlSeconds,
-    );
-
-    const cachedResponse = cachedResponseSelector(getState());
-    if (cachedResponse) {
-      dispatch({
-        ...action,
-        payload: cachedResponse,
-        error: null,
-        meta: { status: 'ASYNC_CACHED', identifier },
-      });
-
-      return Promise.resolve(cachedResponse);
-    }
-  }
-
-  dispatch({
-    ...action,
-    payload: null,
-    error: null,
-    meta: { status: 'ASYNC_PENDING', identifier },
-  });
-
-  const promise = operation(dispatch, getState)
-    .then(result => {
-      dispatch({
-        ...action,
-        payload: result,
-        error: null,
-        meta: { status: 'ASYNC_COMPLETE', identifier, cache },
-      });
-
-      delete _dedupedPromises[`${action.type}(${identifier || ''})`];
-      return result;
-    })
-    .catch(error => {
-      try {
+    const promise = operation(dispatch, getState)
+      .then(result => {
         dispatch({
           ...action,
-          payload: null,
-          error,
-          meta: { status: 'ASYNC_FAILED', identifier },
+          payload: result,
+          error: null,
+          meta: { status: 'ASYNC_COMPLETE', identifier, cache },
         });
-      } catch (e) {
-        throw e;
-      }
 
-      delete _dedupedPromises[`${action.type}(${identifier || ''})`];
-      throw error;
-    });
+        delete _dedupedPromises[`${action.type}(${identifier || ''})`];
+        return result;
+      })
+      .catch(error => {
+        try {
+          dispatch({
+            ...action,
+            payload: null,
+            error,
+            meta: { status: 'ASYNC_FAILED', identifier },
+          });
+        } catch (e) {
+          throw e;
+        }
 
-  _dedupedPromises[`${action.type}(${identifier || ''})`] = promise;
-  return promise;
+        delete _dedupedPromises[`${action.type}(${identifier || ''})`];
+        throw error;
+      });
+
+    _dedupedPromises[`${action.type}(${identifier || ''})`] = promise;
+    return promise;
+  };
+
+  return thunk;
 };
