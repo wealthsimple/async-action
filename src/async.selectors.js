@@ -6,7 +6,7 @@ import type {
   ErrorSelector,
 } from './async.types';
 
-const selectAllAsyncRequests = state => state.asyncActions;
+const selectAllAsyncRequests = state => state.asyncActions || {};
 
 /**
  * Creates a selector that returns a set of identifiers for the given action that
