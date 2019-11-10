@@ -169,6 +169,10 @@ const selector = makeIsPendingSelector('FETCH_ACCOUNT_DATA', 'id1');
 selector(state);
 ```
 
+> Note that `pending` is only true _while the request is active_. In the case of a fetch request, there will likely be a render that happens prior to the request starting in some cases where `pending` is false, but there's also no data yet. This is because async action is also used for post requests and other general operations.
+
+> If you want your selector to be `pending` prior to the start of the request, use the `initialvalue` parameter. A common use case for this is a LoadingIndicator for the first data fetch.
+
 Or if you only care whether any instance of this request is pending you can use `makeAllPendingSelector`:
 
 ```js
