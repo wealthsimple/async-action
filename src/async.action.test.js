@@ -4,6 +4,7 @@ import {
   isPending,
   isComplete,
   isFailed,
+  isBeingReset,
 } from './async.action';
 
 describe('Async Action Creators', () => {
@@ -135,6 +136,10 @@ describe('Async Action Creators', () => {
     expect(
       isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }),
     ).toBe(false);
+
+    expect(
+      isPending({ type: 'FOO_ACTION', meta: { status: 'ASYNC_RESET' } }),
+    ).toBe(false);
   });
 
   it('can tell when an async action completed successfully', () => {
@@ -153,6 +158,10 @@ describe('Async Action Creators', () => {
     expect(
       isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }),
     ).toBe(true);
+
+    expect(
+      isComplete({ type: 'FOO_ACTION', meta: { status: 'ASYNC_RESET' } }),
+    ).toBe(false);
   });
 
   it('can tell when an async action has failed', () => {
@@ -166,6 +175,36 @@ describe('Async Action Creators', () => {
 
     expect(
       isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }),
+    ).toBe(true);
+
+    expect(
+      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }),
+    ).toBe(false);
+
+    expect(
+      isFailed({ type: 'FOO_ACTION', meta: { status: 'ASYNC_RESET' } }),
+    ).toBe(false);
+  });
+
+  it('can tell when an async action is being reset', () => {
+    expect(
+      isBeingReset({ type: 'FOO_ACTION', meta: { status: 'ASYNC_PENDING' } }),
+    ).toBe(false);
+
+    expect(
+      isBeingReset({ type: 'FOO_ACTION', meta: { status: 'ASYNC_COMPLETE' } }),
+    ).toBe(false);
+
+    expect(
+      isBeingReset({ type: 'FOO_ACTION', meta: { status: 'ASYNC_FAILED' } }),
+    ).toBe(false);
+
+    expect(
+      isBeingReset({ type: 'FOO_ACTION', meta: { status: 'ASYNC_CACHED' } }),
+    ).toBe(false);
+
+    expect(
+      isBeingReset({ type: 'FOO_ACTION', meta: { status: 'ASYNC_RESET' } }),
     ).toBe(true);
   });
 

@@ -21,7 +21,9 @@ export type AsyncAction<Action: SimpleAction, PayloadType> = Action & {
       | 'ASYNC_PENDING'
       | 'ASYNC_FAILED'
       | 'ASYNC_DEDUPED'
-      | 'ASYNC_CACHED',
+      | 'ASYNC_CACHED'
+      | 'ASYNC_RESET',
+
     identifier?: string,
   },
 };
@@ -38,7 +40,8 @@ export type AAction<ActionType: string, PayloadType, ActionFields = {}> = {
         | 'ASYNC_PENDING'
         | 'ASYNC_FAILED'
         | 'ASYNC_DEDUPED'
-        | 'ASYNC_CACHED',
+        | 'ASYNC_CACHED'
+        | 'ASYNC_RESET',
       identifier?: string,
     },
   };
@@ -73,7 +76,9 @@ export type AsyncActionRecord = {
 };
 
 export type AsyncActionState = {
-  [actionType: string]: AsyncActionRecord,
+  [actionType: string]: {
+    [identifier: string]: AsyncActionRecord,
+  },
 };
 
 export type AllPendingSelector = (state: *) => string[];

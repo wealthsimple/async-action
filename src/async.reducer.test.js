@@ -1,5 +1,6 @@
 // @flow
 import { asyncActionReducer } from './async.reducer';
+import { resetAsyncAction } from './async.action';
 
 describe('AsyncAction reducer', () => {
   it('should record a pending request', () => {
@@ -141,7 +142,6 @@ describe('AsyncAction reducer', () => {
       },
     };
 
-    // $FlowFixMe - intentionally testing a bad runtime case.
     const newState = asyncActionReducer(state, action);
 
     expect(newState).toEqual({
@@ -151,6 +151,46 @@ describe('AsyncAction reducer', () => {
           error: {
             name: 'UNKNOWN',
             message: 'UNKNOWN',
+          },
+        },
+      },
+    });
+  });
+
+  it('resets a record if asked to', () => {
+    const initialState = {
+      GET_FOOS_BY_NAME: {
+        nameOfTheFoo: {
+          pending: false,
+          error: {
+            name: 'Error',
+            message: 'BOOM',
+          },
+        },
+      },
+      GET_BARS_BY_NAME: {
+        nameOfTheBar: {
+          pending: false,
+          error: {
+            name: 'Error2',
+            message: 'BOOM2',
+          },
+        },
+      },
+    };
+
+    const action = resetAsyncAction('GET_FOOS_BY_NAME', 'nameOfTheFoo');
+
+    const newState = asyncActionReducer(initialState, action);
+
+    expect(newState).toEqual({
+      GET_FOOS_BY_NAME: {},
+      GET_BARS_BY_NAME: {
+        nameOfTheBar: {
+          pending: false,
+          error: {
+            name: 'Error2',
+            message: 'BOOM2',
           },
         },
       },

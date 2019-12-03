@@ -58,7 +58,7 @@ You can use `createAsyncAction` to make an action from a regular action and a fu
 import { createAsyncAction } from '@wealthsimple/async-action';
 
 const action = {
-  type: 'FETCH_ACCOUNTS',
+  type: 'ACCOUNTS_REQUESTED',
 };
 
 const operation = () => http
@@ -81,7 +81,7 @@ You can listen to these things in your reducers:
 import { isComplete } from '@wealthsimple/async-action';
 
 const accountDataReducer = (state = {}, action) => {
-  if (action.type === 'FETCH_ACCOUNTS' && isComplete(action)) {
+  if (action.type === 'ACCOUNTS_REQUESTED' && isComplete(action)) {
     return action.payload;
   }
 
@@ -94,13 +94,13 @@ const accountDataReducer = (state = {}, action) => {
 This library also provides helpers getting information about ongoing actions: `makeIsPendingSelector` and `makeErrorSelector`. These two functions let you make selectors for pending and error states from your actions:
 
 ```js
-const selectAccountsFetchPending = makeIsPendingSelector(FETCH_ACCOUNTS);
+const selectAccountsFetchPending = makeIsPendingSelector(ACCOUNTS_REQUESTED);
 
 selectAccountsPending(state);
 ```
 
 ```js
-const selectAccountsFetchFailed = makeErrorSelector(FETCH_ACCOUNTS);
+const selectAccountsFetchFailed = makeErrorSelector(ACCOUNTS_REQUESTED);
 
 // If an error happened, this will give you an object containing the error's
 // name, message, and stack trace.
@@ -111,11 +111,11 @@ selectAccountsFetchFailed(state);
 
 ### Dispatching:
 
-By default, there can only be one instance of an AsyncAction with a particular type active at any given time. This is fine for actions like `FETCH_ACCOUNTS` above that don't take any parameters. However what if you want to use the same action type to allow fetching of data for specific accounts?
+By default, there can only be one instance of an AsyncAction with a particular type active at any given time. This is fine for actions like `ACCOUNTS_REQUESTED` above that don't take any parameters. However what if you want to use the same action type to allow fetching of data for specific accounts?
 
 ```js
 const fetchAccountData = (accountId: string) =>
-  createAsyncAction({ type: 'FETCH_ACCOUNT_DATA' }, () =>
+  createAsyncAction({ type: 'ACCOUNT_DATA_REQUESTED' }, () =>
     http.get(`/api/accounts/${accountId}`),
   );
 ```
@@ -127,7 +127,7 @@ import { createAsyncAction } from '@wealthsimple/async-action';
 
 const fetchAccountData = (accountId: string) =>
   createAsyncAction(
-    { type: 'FETCH_ACCOUNT_DATA' },
+    { type: 'ACCOUNT_DATA_REQUESTED' },
     () => http.get(`/api/accounts/${accountId}`),
     { identifier: accountId },
   );
@@ -144,7 +144,7 @@ This same identifier can also be used in your reducers to record return values i
 import { isComplete } from '@wealthsimple/async-action';
 
 const accountDataReducer = (state = {}, action) => {
-  if (action.type === 'FETCH_ACCOUNT_DATA' && isComplete(action)) {
+  if (action.type === 'ACCOUNT_DATA_REQUESTED' && isComplete(action)) {
     return {
       ...state,
       [action.meta.identifier]: action.payload,
@@ -162,9 +162,9 @@ Finally, the identifier can also be used in your selectors to get info about spe
 ```js
 import { makeIsPendingSelector } from '@wealthsimple/async-action';
 
-const selector = makeIsPendingSelector('FETCH_ACCOUNT_DATA', 'id1');
+const selector = makeIsPendingSelector('ACCOUNT_DATA_REQUESTED', 'id1');
 
-// Returns true if the FETCH_ACCOUNT_DATA request with identifier === 'id1'
+// Returns true if the ACCOUNT_DATA_REQUESTED request with identifier === 'id1'
 // is pending.
 selector(state);
 ```
@@ -178,7 +178,7 @@ Or if you only care whether any instance of this request is pending you can use 
 ```js
 import { makeAllPendingSelector } from '@wealthsimple/async-action';
 
-const selector = makeAllPendingSelector('FETCH_ACCOUNT_DATA');
+const selector = makeAllPendingSelector('ACCOUNT_DATA_REQUESTED');
 
 // Returns an array of identifiers for this action type that are
 // currently pending.
@@ -210,16 +210,16 @@ Since the thunk returns a promise that resolves to the value of `operation`, asy
 
 ```js
 const fetchAccounts = () => createAsyncAction(
-  { type: 'FETCH_ACCOUNTS' },
+  { type: 'ACCOUNTS_REQUESTED' },
   () => http.get('/api/accounts').then(r => r.data));
 
 const fetchTransactionsForAccount = (accountId) => createAsyncAction(
-  { type: 'FETCH_TRANSACTIONS_FOR_ACCOUNT', accountId },
+  { type: 'ACCOUNT_TRANSACTIONS_REQUESTED', accountId },
   () => http.get(`/api/accounts/${accountId}/transactions`).then(r => r.data),
   { identifier: accountId });
 
 const fetchTransactionsFromFirstAccount = createAsyncAction(
-  { type: FETCH_TRANSACTIONS_FROM_FIRST_ACCOUNT },
+  { type: FIRST_ACCOUNT_TRANSACTIONS_REQUESTED },
   dispatch =>
     dispatch(fetchAccounts())
       .then(accounts => dispatch(fetchTransactionsForAccount(accounts[0].id)));
@@ -228,12 +228,13 @@ const fetchTransactionsFromFirstAccount = createAsyncAction(
 ### API - Advanced - Caching:
 
 AsyncAction exposes simple payload caching functionality. The intent here is to allow your components to 'fire and forget' data fetch actions; we'll take care of not making redundant HTTP requests under the hood.
+
 You can enable this by specifying 'cache: true' when you create the action:
 
 ```js
 const getALargeDataSet = () =>
   createAsyncAction(
-    { type: 'GET_LARGE_DATA_SET' },
+    { type: 'LARGE_DATA_SET_REQUESTED' },
     () => http.get('/api/large_data_set'),
     { cache: true },
   );
@@ -251,7 +252,7 @@ But what is caching without invalidation? AsyncAction also allows you to set a t
 ```js
 const getALargeDataSet = () =>
   createAsyncAction(
-    { type: 'GET_LARGE_DATA_SET' },
+    { type: 'LARGE_DATA_SET_REQUESTED' },
     () => http.get('/api/large_data_set'),
     { cache: true, ttlSeconds: 10 },
   );
@@ -263,7 +264,7 @@ Alternately, you can tell an action not to use any preexisting cache value using
 ```js
 const getALargeDataSet = () =>
   createAsyncAction(
-    { type: 'GET_LARGE_DATA_SET' },
+    { type: 'LARGE_DATA_SET_REQUESTED' },
     () => http.get('/api/large_data_set'),
     { cache: true, ttlSeconds: 10, overwriteCache: true },
   );
@@ -272,12 +273,26 @@ const getALargeDataSet = () =>
 This will ignore what's currently in the cache, but save the new response for
 next time.
 
+Finally, you can explicitly drop any cached values or error information:
+
+```js
+import { resetAsyncAction } from '@wealthsimple/async-action';
+
+// ...
+
+dispatch(resetAsyncAction('LARGE_DATA_SET_REQUESTED'));
+
+// or if an identifier was used:
+
+dispatch(resetAsyncAction('LARGE_DATA_SET_REQUESTED', 'id1'));
+```
+
 ## A Word About Static Typing
 
 AsyncAction is designed to be used with FlowType for static type checking. One common pattern for doing this is to define your action types as string literal types:
 
 ```js
-type MySimpleAction = { type: 'MY_SIMPLE_ACTION' };
+type MySimpleAction = { type: 'SOMETHING_SIMPLE_HAPPENED' };
 ```
 
 Your relevant action creator declares this as a return type to prevent you from making typos with the action type field:
@@ -285,34 +300,34 @@ Your relevant action creator declares this as a return type to prevent you from 
 ```js
 // Works:
 const createMySimpleAction = (): MySimpleAction => ({
-  type: 'MY_SIMPLE_ACTION',
+  type: 'SOMETHING_SIMPLE_HAPPENED',
 });
 ```
 
 ```js
 // Does not work: Flow catches the typo:
 const createMySimpleAction = (): MySimpleAction => ({
-  type: 'MY_SIIIIMPLE_ACTION',
+  type: 'SOMETHING_SIIIIMPLE_HAPPENED',
 });
 ```
 
 This also extends to Reducers:
 
 ```js
-type MySimpleAction = { type: 'MY_SIMPLE_ACTION' };
-type MySimpleAction2 = { type: 'MY_SIMPLE_ACTION_2' };
+type MySimpleAction = { type: 'SOMETHING_SIMPLE_HAPPENED' };
+type MySimpleAction2 = { type: 'SOMETHING_SIMPLE_HAPPENED_2' };
 
 type MyAction = MySimpleAction | MySimpleAction2;
 
 const myReducer = (state: MyState, action: MyAction) => {
   switch (action.type) {
     // Works, with type refinement.
-    case 'MY_SIMPLE_ACTION':
+    case 'SOMETHING_SIMPLE_HAPPENED':
       // handleMySimpleAction: (state: MyState, action: MySimpleAction);
       return handleMySimpleAction(state, action);
 
     // Works, with type refinement.
-    case 'MY_SIMPLE_ACTION_2':
+    case 'SOMETHING_SIMPLE_HAPPENED_2':
       // handleMySimpleAction: (state: MyState, action: MySimpleAction2);
       return handleMySimpleAction2(state, action);
 
@@ -334,7 +349,7 @@ The good news is, you can also do this with AsyncAction:
 import { type AAction, createAsyncAction } from '@wealthsimple/async-action';
 
 type SimplePayload = {| message: string |};
-type MyAsyncAction = AAction<'MY_ASYNC_ACTION', SimplePayload>;
+type MyAsyncAction = AAction<'SOMETHING_HAPPENED', SimplePayload>;
 ```
 
 Because `createAsyncAction` actually returns a Thunk, it's not quite as simple as declaring a return type on the action creator. However we can get type checking using a generic argument:
@@ -342,7 +357,7 @@ Because `createAsyncAction` actually returns a Thunk, it's not quite as simple a
 ```ts
 // Works:
 const myAsyncAction = () =>
-  createAsyncAction<MyAsyncAction>('MY_ASYNC_ACTION', () =>
+  createAsyncAction<MyAsyncAction>('SOMETHING_HAPPENED', () =>
     Promise.resolve({ message: 'OHAI' }),
   );
 ```
@@ -350,7 +365,7 @@ const myAsyncAction = () =>
 ```ts
 // Does not work: action type is wrong.
 const myAsyncAction = () =>
-  createAsyncAction<MyAsyncAction>('MY_AAASYNC_ACTION', () =>
+  createAsyncAction<MyAsyncAction>('SOOOMETHING_HAPPENED', () =>
     Promise.resolve({ message: 'OHAI' }),
   );
 ```
@@ -358,7 +373,7 @@ const myAsyncAction = () =>
 ```ts
 // Does not work: operation response does match the action's payload type.
 const myAsyncAction = () =>
-  createAsyncAction<MyAsyncAction>('MY_ASYNC_ACTION', () =>
+  createAsyncAction<MyAsyncAction>('SOMETHING_HAPPENED', () =>
     Promise.resolve({ count: 42 }),
   );
 ```
@@ -369,20 +384,20 @@ The reducer also acts the same as before:
 type SimplePayload = {| message: string |};
 type SimplePayload2 = {| name: string |};
 
-type MyAsyncAction = AAction<'MY_ASYNC_ACTION', SimplePayload>;
-type MyAsyncAction2 = AACtion<'MY_ASYNC_ACTION_2', SimplePayload2>;
+type MyAsyncAction = AAction<'SOMETHING_HAPPENED', SimplePayload>;
+type MyAsyncAction2 = AACtion<'SOMETHING_HAPPENED_2', SimplePayload2>;
 
 type MyAction = MyAsyncAction | MyAsyncAction;
 
 const myReducer = (state: MyState, action: MyAction) => {
   switch (action.type) {
     // Works, with type refinement.
-    case 'MY_ASYNC_ACTION':
+    case 'SOMETHING_HAPPENED':
       // handleMySimpleAction: (state: MyState, action: MyAsyncAction);
       return handleMyAsyncAction(state, action);
 
     // Works, with type refinement.
-    case 'MY_ASYNC_ACTION_2':
+    case 'SOMETHING_HAPPENED_2':
       // handleMySimpleAction: (state: MyState, action: MyAsyncAction2);
       return handleMyAsyncAction2(state, action);
 

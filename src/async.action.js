@@ -23,6 +23,9 @@ export const isComplete = (action: $Subtype<SimpleAction>) =>
 export const isFailed = (action: $Subtype<SimpleAction>) =>
   !!action.meta && action.meta.status === 'ASYNC_FAILED';
 
+export const isBeingReset = (action: $Subtype<SimpleAction>) =>
+  !!action.meta && action.meta.status === 'ASYNC_RESET';
+
 const _dedupedPromises = {};
 
 /**
@@ -119,3 +122,8 @@ export const createAsyncAction = <AAction: AsyncAction<SimpleAction, *>>(
 
   return thunk;
 };
+
+export const resetAsyncAction = (type: string, identifier?: string) => ({
+  type,
+  meta: { status: 'ASYNC_RESET', identifier },
+});

@@ -60,6 +60,14 @@ export const asyncActionReducer = (
           },
         },
       };
+    case 'ASYNC_RESET':
+      return {
+        ...state,
+        [action.type]: {
+          ...state[action.type],
+          [action.meta.identifier || '']: undefined,
+        },
+      };
     default:
       return state;
   }
