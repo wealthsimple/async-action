@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector, Selector } from 'reselect';
 import {
   AsyncActionState,
   AllPendingSelector,
@@ -6,7 +6,7 @@ import {
   ErrorSelector,
 } from './async.types';
 
-const selectAllAsyncRequests = (state: object) => {
+const selectAllAsyncRequests = (state: object): AsyncActionState => {
   const asyncState = state as { asyncActions: AsyncActionState };
   return asyncState.asyncActions ?? {};
 }
@@ -37,7 +37,7 @@ export const makeAllPendingSelector = (
 export const makeIsPendingSelector = (
   actionType: string,
   identifier?: string,
-  initialValue: boolean = false,
+  initialValue = false,
 ): IsPendingSelector =>
   createSelector(
     selectAllAsyncRequests,
@@ -80,7 +80,7 @@ export const makeCachedResponseSelector = (
   actionType: string,
   identifier?: string,
   ttlSeconds?: number,
-) =>
+): Selector<object, any> =>
   createSelector(
     selectAllAsyncRequests,
     allAsyncRequests => {

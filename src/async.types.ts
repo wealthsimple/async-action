@@ -36,7 +36,7 @@ export type AAction<
 
 export type GetState<State extends object = object> = () => State;
 
-export type AsyncThunk<Payload, State extends Object = object> = (
+export type AsyncThunk<Payload, State extends object = object> = (
   dispatch: Dispatch,
   getState: GetState<State>,
 ) => Promise<Payload>;

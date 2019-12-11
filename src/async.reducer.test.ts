@@ -94,6 +94,7 @@ describe('AsyncAction reducer', () => {
     expect(newState).toEqual({
       GET_FOOS_BY_NAME: {
         nameOfTheFoo: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           __do_not_use__response_cache: {
             value: 'a payload',
             secondsSinceEpoch: 1522620261,

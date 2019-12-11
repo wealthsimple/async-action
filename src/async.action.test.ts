@@ -9,7 +9,7 @@ import {
 describe('Async Action Creators', () => {
   it('notifies when the action completes successfully', async () => {
     const mockDispatch = jest.fn();
-    const mockGetState = () => ({});
+    const mockGetState = (): {} => ({});
     const mockPayload = 'a payload';
 
     const actionThunk = createAsyncAction(
@@ -38,7 +38,7 @@ describe('Async Action Creators', () => {
 
   it('notifies when the action fails', async () => {
     const mockDispatch = jest.fn();
-    const mockGetState = () => ({});
+    const mockGetState = (): {} => ({});
 
     try {
       const actionThunk = createAsyncAction(
@@ -69,7 +69,7 @@ describe('Async Action Creators', () => {
 
   it('de-dupes already pending actions', async () => {
     const mockDispatch = jest.fn();
-    const mockGetState = () => ({
+    const mockGetState = (): {} => ({
       asyncActions: {
         SOME_ACTION: {
           anIdentifier: {
@@ -104,7 +104,7 @@ describe('Async Action Creators', () => {
       .mockImplementationOnce(_a => {
         throw new Error('DISPATCH BOOM');
       });
-    const mockGetState = () => ({});
+    const mockGetState = (): {} => ({});
 
     const actionThunk = createAsyncAction(
       { type: 'SOME_ACTION' },
@@ -210,10 +210,11 @@ describe('Async Action Creators', () => {
   it('caches responses if asked to', async () => {
     const mockPayload = 'a payload';
     const mockDispatch = jest.fn();
-    const mockGetState = () => ({
+    const mockGetState = (): {} => ({
       asyncActions: {
         SOME_ACTION: {
           anIdentifier: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
             __do_not_use__response_cache: {
               value: mockPayload,
             },
@@ -249,10 +250,11 @@ describe('Async Action Creators', () => {
 
     const mockPayload = 'a payload';
     const mockDispatch = jest.fn();
-    const mockGetState = () => ({
+    const mockGetState = (): {} => ({
       asyncActions: {
         SOME_ACTION: {
           anIdentifier: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
             __do_not_use__response_cache: {
               value: mockPayload,
               secondsSinceEpoch: 1522620260, // 3 seconds ago.

@@ -1,4 +1,4 @@
-import { Action, Dispatch } from 'redux';
+import { AnyAction, Action, Dispatch } from 'redux';
 import {
   AsyncAction,
   AsyncActionOptions,
@@ -10,22 +10,22 @@ import {
   makeCachedResponseSelector,
 } from './async.selectors';
 
-export const isPending = <A extends Action>(action: A) => {
+export const isPending = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_PENDING';
 }
 
-export const isComplete = <A extends Action>(action: A) => {
+export const isComplete = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
   return (asyncAction.meta?.status === 'ASYNC_COMPLETE' || asyncAction.meta?.status === 'ASYNC_CACHED');
 }
 
-export const isFailed = <A extends Action>(action: A) => {
+export const isFailed = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_FAILED';
 }
 
-export const isBeingReset = <A extends Action>(action: A) => {
+export const isBeingReset = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_RESET';
 }
@@ -130,7 +130,7 @@ export const createAsyncAction = <
   return thunk;
 };
 
-export const resetAsyncAction = (type: string, identifier?: string) => ({
+export const resetAsyncAction = (type: string, identifier?: string): AnyAction => ({
   type,
   meta: { status: 'ASYNC_RESET', identifier },
 });

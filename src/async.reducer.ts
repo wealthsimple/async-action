@@ -30,6 +30,7 @@ export const asyncActionReducer = (
           ...state[action.type],
           [action.meta.identifier || '']: action.meta.cache
             ? {
+                // eslint-disable-next-line @typescript-eslint/camelcase
                 __do_not_use__response_cache: {
                   value: action.payload,
                   secondsSinceEpoch: Math.floor(Date.now() / 1000),
