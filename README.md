@@ -22,7 +22,6 @@ We use [flow](http://flowtype.org) for static typings internally. By default, we
 **Flow:**
 
 ```js
-// @flow
 import { createAsyncAction } from '@wealthsimple/async-action';
 ```
 

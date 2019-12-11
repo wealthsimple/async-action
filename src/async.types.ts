@@ -1,4 +1,4 @@
-// @flow
+
 import type { DispatchAPI } from 'redux';
 
 export type SimpleAction = { type: $Subtype<string> };

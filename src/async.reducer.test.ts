@@ -1,4 +1,3 @@
-// @flow
 import { asyncActionReducer } from './async.reducer';
 import { resetAsyncAction } from './async.action';
 

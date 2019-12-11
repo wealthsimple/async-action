@@ -1,4 +1,3 @@
-// @flow
 import type { AsyncAction, AsyncActionState } from './async.types';
 
 /**

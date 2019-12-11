@@ -4,8 +4,6 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "check_types": "yarn flow",
-    "flow": "flow check",
     "lint:js": "eslint 'src/*'",
     "lint:css": "echo 'No CSS in this repo.'",
     "security": "yarn audit",
@@ -16,22 +14,12 @@
     "prettier": "prettier --write './+(src)/**/*.js'",
     "cdc": "madge --no-spinner --exclude .yarn-cache --circular src",
     "prebuild": "rm -rf dist",
-    "build": "yarn babel -d dist --ignore **/test.js src",
+    "build": "tsc",
     "prepublishOnly": "yarn lint:js && yarn test && yarn cdc && yarn build"
   },
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.3",
-    "@babel/plugin-proposal-class-properties": "^7.4.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
-    "@babel/plugin-transform-async-to-generator": "^7.4.4",
-    "@babel/plugin-transform-object-assign": "^7.2.0",
-    "@babel/polyfill": "^7.4.4",
-    "@babel/preset-env": "^7.4.3",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/runtime": "^7.4.4",
     "@semantic-release/git": "^7.0.16",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.7.1",
@@ -55,7 +43,8 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "semantic-release": "^15.13.27"
+    "semantic-release": "^15.13.27",
+    "typescript": "^3.7.3"
   },
   "resolutions": {
     "handlebars": "^4.1.2",
