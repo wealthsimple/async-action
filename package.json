@@ -14,13 +14,14 @@
     "prettier": "prettier --write './+(src)/**/*.js'",
     "cdc": "madge --no-spinner --exclude .yarn-cache --circular src",
     "prebuild": "rm -rf dist",
-    "build": "tsc",
+    "build": "tsc --outDir dist",
     "prepublishOnly": "yarn lint:js && yarn test && yarn cdc && yarn build"
   },
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",
   "devDependencies": {
     "@semantic-release/git": "^7.0.16",
+    "@types/jest": "^24.0.23",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.7.1",
     "coveralls": "^3.0.3",

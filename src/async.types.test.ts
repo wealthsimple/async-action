@@ -1,19 +1,8 @@
+import { createStore, applyMiddleware, Dispatch } from 'redux';
+import reduxThunk, { ThunkDispatch } from 'redux-thunk';
+import { createAsyncAction, AsyncAction, AAction, GetState } from '.';
 
-import {
-  type DispatchAPI,
-  type Store,
-  createStore,
-  applyMiddleware,
-} from 'redux';
-import reduxThunk from 'redux-thunk';
-import {
-  type AsyncAction,
-  type AsyncThunk,
-  type AAction,
-  type GetState,
-  createAsyncAction,
-} from '.';
-
+type AsyncThunkDispatch = ThunkDispatch<any, any, any>;
 /**
  * Typedef tests
  *
@@ -21,9 +10,9 @@ import {
  * build time for a variety on scenarios.
  */
 describe('AsyncAction typedef tests', () => {
-  type FooAction = { type: 'FOO' };
+  type FooAction = { type: 'FOO'; param: number };
   let simpleAction: FooAction;
-  let store: Store<{}, AsyncThunk<*>, DispatchAPI<AsyncThunk<*>>>;
+  let store: { dispatch: AsyncThunkDispatch };
 
   beforeEach(() => {
     simpleAction = { type: 'FOO', param: 42 };
@@ -37,12 +26,13 @@ describe('AsyncAction typedef tests', () => {
     });
 
     it('can create an AsyncAction with a semi-complex operation', () => {
-      const operation = _dispatch => Promise.resolve({ message: 'OHAI' });
+      const operation = (_dispatch: Dispatch) =>
+        Promise.resolve({ message: 'OHAI' });
       store.dispatch(createAsyncAction(simpleAction, operation));
     });
 
     it('can create an AsyncAction with a complex operation', () => {
-      const operation = (_dispatch, _getState) =>
+      const operation = (_dispatch: Dispatch, _getState: GetState) =>
         Promise.resolve({ message: 'OHAI' });
       store.dispatch(createAsyncAction(simpleAction, operation));
     });
@@ -65,7 +55,8 @@ describe('AsyncAction typedef tests', () => {
       });
 
       it('can type and create an AsyncAction with a semi-complex operation', () => {
-        const operation = _dispatch => Promise.resolve({ message: 'OHAI' });
+        const operation = (_dispatch: Dispatch) =>
+          Promise.resolve({ message: 'OHAI' });
         const thunk = createAsyncAction<FooAsyncAction>(
           simpleAction,
           operation,
@@ -75,7 +66,7 @@ describe('AsyncAction typedef tests', () => {
       });
 
       it('can type and create an AsyncAction with a complex operation', () => {
-        const operation = (_dispatch, _getState) =>
+        const operation = (_dispatch: Dispatch, _getState: GetState) =>
           Promise.resolve({ message: 'OHAI' });
         const thunk = createAsyncAction<FooAsyncAction>(
           simpleAction,
@@ -96,14 +87,14 @@ describe('AsyncAction typedef tests', () => {
       });
 
       it('can type and create an AsyncAction with a semi-complex operation', () => {
-        const operation = (_dispatch: DispatchAPI<*>) =>
+        const operation = (_dispatch: Dispatch) =>
           Promise.resolve({ message: 'OHAI' });
         const thunk = createAsyncAction<FooAAction>(simpleAction, operation);
         store.dispatch(thunk);
       });
 
       it('can type and create an AsyncAction with a complex operation', () => {
-        const operation = (_dispatch: DispatchAPI<*>, _getState: GetState<*>) =>
+        const operation = (_dispatch: Dispatch, _getState: GetState) =>
           Promise.resolve({ message: 'OHAI' });
         const thunk = createAsyncAction<FooAAction>(simpleAction, operation);
         store.dispatch(thunk);
@@ -111,3 +102,5 @@ describe('AsyncAction typedef tests', () => {
     });
   });
 });
+
+// TODO test with state specified too.

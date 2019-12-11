@@ -1,12 +1,15 @@
-
 import { createSelector } from 'reselect';
-import type {
+import {
+  AsyncActionState,
   AllPendingSelector,
   IsPendingSelector,
   ErrorSelector,
 } from './async.types';
 
-const selectAllAsyncRequests = state => state.asyncActions || {};
+const selectAllAsyncRequests = (state: object) => {
+  const asyncState = state as { asyncActions: AsyncActionState };
+  return asyncState.asyncActions ?? {};
+}
 
 /**
  * Creates a selector that returns a set of identifiers for the given action that
@@ -34,7 +37,7 @@ export const makeAllPendingSelector = (
 export const makeIsPendingSelector = (
   actionType: string,
   identifier?: string,
-  initialValue?: boolean = false,
+  initialValue: boolean = false,
 ): IsPendingSelector =>
   createSelector(
     selectAllAsyncRequests,
@@ -74,7 +77,7 @@ export const makeErrorSelector = (
  * Internal use only
  */
 export const makeCachedResponseSelector = (
-  actionType: $Subtype<string>,
+  actionType: string,
   identifier?: string,
   ttlSeconds?: number,
 ) =>

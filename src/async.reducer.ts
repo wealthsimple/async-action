@@ -1,4 +1,4 @@
-import type { AsyncAction, AsyncActionState } from './async.types';
+import { AsyncAction, AsyncActionState } from './async.types';
 
 /**
  * Keeps information about pending or failed async actions in the store.
@@ -6,7 +6,7 @@ import type { AsyncAction, AsyncActionState } from './async.types';
  */
 export const asyncActionReducer = (
   state: AsyncActionState = {},
-  action: AsyncAction<*, *>,
+  action: AsyncAction<any, any>,
 ): AsyncActionState => {
   if (!action.meta) {
     return state;

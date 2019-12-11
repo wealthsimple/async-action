@@ -3,10 +3,14 @@ import {
   makeErrorSelector,
   makeAllPendingSelector,
 } from './async.selectors';
+import { AsyncActionState } from './async.types';
 
+type TestState = {
+  asyncActions: AsyncActionState;
+};
 describe('AsyncSelectors', () => {
-  let state;
-  let fakeError;
+  let state: TestState;
+  let fakeError: Error;
 
   beforeEach(() => {
     fakeError = new Error('BOOM');

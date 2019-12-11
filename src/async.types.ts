@@ -1,86 +1,76 @@
+import { Dispatch, Action } from 'redux';
 
-import type { DispatchAPI } from 'redux';
-
-export type SimpleAction = { type: $Subtype<string> };
-
-// Intentionally recursive type.
-// eslint-disable-next-line no-use-before-define
-type JSONLiteral = JSONObject | JSONArray | string | number;
-type JSONObject = {
-  [string]: JSONLiteral,
-};
-type JSONArray = JSONLiteral[];
+type Status =
+  | 'ASYNC_COMPLETE'
+  | 'ASYNC_PENDING'
+  | 'ASYNC_FAILED'
+  | 'ASYNC_DEDUPED'
+  | 'ASYNC_CACHED'
+  | 'ASYNC_RESET';
 
 // Deprecated. Use the AAction shorthand below.
-export type AsyncAction<Action: SimpleAction, PayloadType> = Action & {
-  payload?: ?PayloadType,
-  error?: ?(JSONLiteral | Error),
+export type AsyncAction<A extends Action, PayloadType> = A & {
+  payload?: PayloadType | null;
+  error?: ErrorInfo | null;
   meta: {
-    status:
-      | 'ASYNC_COMPLETE'
-      | 'ASYNC_PENDING'
-      | 'ASYNC_FAILED'
-      | 'ASYNC_DEDUPED'
-      | 'ASYNC_CACHED'
-      | 'ASYNC_RESET',
-
-    identifier?: string,
-  },
+    status: Status;
+    identifier?: string;
+  };
 };
 
 // Shorthand form of AsyncAction:
-export type AAction<ActionType: string, PayloadType, ActionFields = {}> = {
-  type: ActionType,
+export type AAction<
+  ActionType extends string,
+  PayloadType,
+  ActionFields = {}
+> = {
+  type: ActionType;
 } & ActionFields & {
-    payload?: ?PayloadType,
-    error?: ?(JSONLiteral | Error),
+    payload?: PayloadType | null;
+    error?: ErrorInfo | null;
     meta: {
-      status:
-        | 'ASYNC_COMPLETE'
-        | 'ASYNC_PENDING'
-        | 'ASYNC_FAILED'
-        | 'ASYNC_DEDUPED'
-        | 'ASYNC_CACHED'
-        | 'ASYNC_RESET',
-      identifier?: string,
-    },
+      status: Status;
+      identifier?: string;
+    };
   };
 
-export type GetState<State> = () => State;
+export type GetState<State extends object = object> = () => State;
 
-export type AsyncThunk<Payload> = (
-  dispatch: DispatchAPI<*>,
-  getState: GetState<*>,
+export type AsyncThunk<Payload, State extends Object = object> = (
+  dispatch: Dispatch,
+  getState: GetState<State>,
 ) => Promise<Payload>;
 
 export type AsyncActionOptions = {
-  identifier?: string,
-  cache?: boolean,
-  overwriteCache?: boolean,
-  ttlSeconds?: number,
+  identifier?: string;
+  cache?: boolean;
+  overwriteCache?: boolean;
+  ttlSeconds?: number;
 };
 
 export type ErrorInfo = {
-  name: string,
-  message: string,
-  stack?: string,
+  name: string;
+  message: string;
+  stack?: string;
 };
 
 export type AsyncActionRecord = {
-  pending: boolean,
-  error?: ErrorInfo,
+  pending: boolean;
+  error?: ErrorInfo;
   __do_not_use__response_cache?: {
-    value: mixed,
-    secondsSinceEpoch: number,
-  },
+    value: any;
+    secondsSinceEpoch: number;
+  };
 };
 
 export type AsyncActionState = {
   [actionType: string]: {
-    [identifier: string]: AsyncActionRecord,
-  },
+    [identifier: string]: AsyncActionRecord;
+  };
 };
 
-export type AllPendingSelector = (state: *) => string[];
-export type IsPendingSelector = (state: *) => boolean;
-export type ErrorSelector = (state: *) => ?ErrorInfo;
+export type AllPendingSelector<S = object> = (state: S) => string[];
+export type IsPendingSelector<S = object> = (state: S) => boolean;
+export type ErrorSelector<S = object> = (
+  state: S,
+) => ErrorInfo | undefined | null;

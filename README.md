@@ -345,7 +345,7 @@ No need for a constants file: static type checking has got your back!
 The good news is, you can also do this with AsyncAction:
 
 ```js
-import { type AAction, createAsyncAction } from '@wealthsimple/async-action';
+import { AAction, createAsyncAction } from '@wealthsimple/async-action';
 
 type SimplePayload = {| message: string |};
 type MyAsyncAction = AAction<'SOMETHING_HAPPENED', SimplePayload>;
