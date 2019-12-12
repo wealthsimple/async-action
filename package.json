@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "check_types": "tsc --noemit",
+    "check_types": "tsc --noemit && echo \"ignoring extra args $@a\"",
     "lint:js": "eslint 'src/*'",
     "lint:css": "echo 'No CSS in this repo.'",
     "security": "yarn audit",
@@ -55,9 +55,6 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest/load-libs.ts"
-    ],
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
