@@ -1,8 +1,9 @@
 {
   "name": "@wealthsimple/async-action",
-  "version": "4.1.0",
+  "version": "5.0.0-alpha.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "check_types": "tsc --noemit",
     "lint:js": "eslint 'src/*'",
@@ -15,9 +16,9 @@
     "prettier": "prettier --write './+(src)/**/*.ts'",
     "cdc": "madge --no-spinner --exclude .yarn-cache --circular src",
     "prebuild": "rm -rf dist",
-    "build": "tsc --outDir dist",
-    "flowgen": "flowgen -no-jsdoc src/async.action.ts src/async.reducer.ts src/async.selectors.ts src/async.types.ts",
-    "prepublishOnly": "yarn lint:js && yarn test && yarn cdc && yarn build && yarn flowgen"
+    "build": "tsc --build tsconfig.build.json",
+    "postbuild": "flowgen --add-flow-header --no-inexact -o dist/export.flow.js src/async.action.ts src/async.reducer.ts src/async.selectors.ts src/async.types.ts",
+    "prepublishOnly": "yarn lint:js && yarn test && yarn cdc && yarn build"
   },
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",

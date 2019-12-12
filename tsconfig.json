@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "removeComments": true,
+    "module": "ES6",
+    "noEmit": true,
     "preserveConstEnums": true,
+    "removeComments": true,
     "sourceMap": true,
     "strict": true
   }
