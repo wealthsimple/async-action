@@ -17,11 +17,11 @@ This lib is intended to be used with [redux-thunk](https://github.com/gaearon/re
 
 ## How to use it?
 
-We use [flow](http://flowtype.org) for static typings internally. By default, we've exposed the ES2017/Flow source code, assuming you want to customize your own babel setup. However if you're not into Flow, we also expose an ES5 UMD build in `dist.js`:
+We use [TypeScript](http://typescriptlang.org) for static typings internally. By default, we've exposed the TypeScript source code, assuming you want to use it directly. However if you're not into TypeScript or transpilation, we also expose an ES5 UMD build in `dist.js`:
 
-**Flow:**
+**Typescript**
 
-```js
+```ts
 import { createAsyncAction } from '@wealthsimple/async-action';
 ```
 
@@ -30,6 +30,10 @@ import { createAsyncAction } from '@wealthsimple/async-action';
 ```js
 import { createAsyncAction } from '@wealthsimple/async-action/dist';
 ```
+
+**Flow:**
+
+This repo also uses [flowgen](https://www.npmjs.com/package/flowgen) in an attempt to support older internal projects that use [FlowType](https://flow.org/). See `export.flow.js` for those typedefs.
 
 ## API - Basic Usage:
 
@@ -288,7 +292,7 @@ dispatch(resetAsyncAction('LARGE_DATA_SET_REQUESTED', 'id1'));
 
 ## A Word About Static Typing
 
-AsyncAction is designed to be used with FlowType for static type checking. One common pattern for doing this is to define your action types as string literal types:
+AsyncAction is designed to be used with TypeScript for static type checking. One common pattern for doing this is to define your action types as string literal types:
 
 ```js
 type MySimpleAction = { type: 'SOMETHING_SIMPLE_HAPPENED' };
@@ -304,7 +308,7 @@ const createMySimpleAction = (): MySimpleAction => ({
 ```
 
 ```js
-// Does not work: Flow catches the typo:
+// Does not work: TypeScript catches the typo:
 const createMySimpleAction = (): MySimpleAction => ({
   type: 'SOMETHING_SIIIIMPLE_HAPPENED',
 });
@@ -330,7 +334,7 @@ const myReducer = (state: MyState, action: MyAction) => {
       // handleMySimpleAction: (state: MyState, action: MySimpleAction2);
       return handleMySimpleAction2(state, action);
 
-    // Flow catches this: 'TOTALLY_BOGUS_STRING' isn't one of the members of
+    // TypeScript catches this: 'TOTALLY_BOGUS_STRING' isn't one of the members of
     // MyAction.
     case 'TOTALLY_BOGUS_STRING':
       return handleMySimpleAction(state, action);
@@ -400,7 +404,7 @@ const myReducer = (state: MyState, action: MyAction) => {
       // handleMySimpleAction: (state: MyState, action: MyAsyncAction2);
       return handleMyAsyncAction2(state, action);
 
-    // Flow catches this: 'TOTALLY_BOGUS_STRING' isn't one of the members of
+    // TypeScript catches this: 'TOTALLY_BOGUS_STRING' isn't one of the members of
     // MyAction.
     case 'TOTALLY_BOGUS_STRING':
       return handleMyAsyncAction(state, action);
