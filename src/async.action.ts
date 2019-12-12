@@ -10,28 +10,28 @@ import {
   makeCachedResponseSelector,
 } from './async.selectors';
 
-export const isPending = (action: AnyAction): boolean => {
+export function isPending(action: AnyAction): boolean {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_PENDING';
-};
+}
 
-export const isComplete = (action: AnyAction): boolean => {
+export function isComplete(action: AnyAction): boolean {
   const asyncAction = action as AsyncAction<any, any>;
   return (
     asyncAction.meta?.status === 'ASYNC_COMPLETE' ||
     asyncAction.meta?.status === 'ASYNC_CACHED'
   );
-};
+}
 
-export const isFailed = (action: AnyAction): boolean => {
+export function isFailed(action: AnyAction): boolean {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_FAILED';
-};
+}
 
-export const isBeingReset = (action: AnyAction): boolean => {
+export function isBeingReset(action: AnyAction): boolean {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_RESET';
-};
+}
 
 const _dedupedPromises: { [key: string]: Promise<any> } = {};
 
@@ -47,14 +47,14 @@ const _dedupedPromises: { [key: string]: Promise<any> } = {};
  * The optional 'options' parameter gives you more control:
  *   * identifier can be used to disambiguate two instances of the same action.
  */
-export const createAsyncAction = <
+export function createAsyncAction<
   AAction extends AsyncAction<Action, any>,
   State extends object = object
 >(
   action: Omit<AAction, keyof { meta: any; error: any; payload: any }>,
   operation: AsyncThunk<AAction['payload']>,
   { identifier, cache, ttlSeconds, overwriteCache }: AsyncActionOptions = {},
-): AsyncThunk<NonNullable<AAction['payload']>, State> => {
+): AsyncThunk<NonNullable<AAction['payload']>, State> {
   // We are returning a Thunk (a function that itself dispatches actions).
   const thunk = (
     dispatch: Dispatch,
@@ -131,12 +131,11 @@ export const createAsyncAction = <
   };
 
   return thunk;
-};
+}
 
-export const resetAsyncAction = (
-  type: string,
-  identifier?: string,
-): AnyAction => ({
-  type,
-  meta: { status: 'ASYNC_RESET', identifier },
-});
+export function resetAsyncAction(type: string, identifier?: string): AnyAction {
+  return {
+    type,
+    meta: { status: 'ASYNC_RESET', identifier },
+  };
+}

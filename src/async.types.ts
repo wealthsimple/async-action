@@ -22,7 +22,7 @@ export type AsyncAction<A extends Action, PayloadType> = A & {
 export type AAction<
   ActionType extends string,
   PayloadType,
-  ActionFields = {}
+  ActionFields = object
 > = {
   type: ActionType;
 } & ActionFields & {

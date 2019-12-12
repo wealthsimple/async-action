@@ -4,10 +4,10 @@ import { AsyncAction, AsyncActionState } from './async.types';
  * Keeps information about pending or failed async actions in the store.
  * UI can use this info to display spinners or error information.
  */
-export const asyncActionReducer = (
+export function asyncActionReducer(
   state: AsyncActionState = {},
   action: AsyncAction<any, any>,
-): AsyncActionState => {
+): AsyncActionState {
   if (!action.meta) {
     return state;
   }
@@ -71,4 +71,4 @@ export const asyncActionReducer = (
     default:
       return state;
   }
-};
+}

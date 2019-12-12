@@ -16,7 +16,8 @@
     "cdc": "madge --no-spinner --exclude .yarn-cache --circular src",
     "prebuild": "rm -rf dist",
     "build": "tsc --outDir dist",
-    "prepublishOnly": "yarn lint:js && yarn test && yarn cdc && yarn build"
+    "flowgen": "flowgen -no-jsdoc src/async.action.ts src/async.reducer.ts src/async.selectors.ts src/async.types.ts",
+    "prepublishOnly": "yarn lint:js && yarn test && yarn cdc && yarn build && yarn flowgen"
   },
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",
@@ -32,6 +33,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "flow-bin": "^0.97.0",
     "flow-typed": "^2.5.1",
+    "flowgen": "^1.10.0",
     "husky": "^3.0.4",
     "jest": "^24.7.1",
     "jest-junit": "^8.0.0",
