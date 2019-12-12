@@ -13,22 +13,25 @@ import {
 export const isPending = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_PENDING';
-}
+};
 
 export const isComplete = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
-  return (asyncAction.meta?.status === 'ASYNC_COMPLETE' || asyncAction.meta?.status === 'ASYNC_CACHED');
-}
+  return (
+    asyncAction.meta?.status === 'ASYNC_COMPLETE' ||
+    asyncAction.meta?.status === 'ASYNC_CACHED'
+  );
+};
 
 export const isFailed = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_FAILED';
-}
+};
 
 export const isBeingReset = (action: AnyAction): boolean => {
   const asyncAction = action as AsyncAction<any, any>;
   return asyncAction.meta?.status === 'ASYNC_RESET';
-}
+};
 
 const _dedupedPromises: { [key: string]: Promise<any> } = {};
 
@@ -46,9 +49,9 @@ const _dedupedPromises: { [key: string]: Promise<any> } = {};
  */
 export const createAsyncAction = <
   AAction extends AsyncAction<Action, any>,
-  State extends object = object,
+  State extends object = object
 >(
-  action: Omit<AAction, keyof { meta: any, error: any, payload: any }>,
+  action: Omit<AAction, keyof { meta: any; error: any; payload: any }>,
   operation: AsyncThunk<AAction['payload']>,
   { identifier, cache, ttlSeconds, overwriteCache }: AsyncActionOptions = {},
 ): AsyncThunk<NonNullable<AAction['payload']>, State> => {
@@ -130,7 +133,10 @@ export const createAsyncAction = <
   return thunk;
 };
 
-export const resetAsyncAction = (type: string, identifier?: string): AnyAction => ({
+export const resetAsyncAction = (
+  type: string,
+  identifier?: string,
+): AnyAction => ({
   type,
   meta: { status: 'ASYNC_RESET', identifier },
 });
