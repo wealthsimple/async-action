@@ -1,19 +1,4 @@
-// HACK!
-// Copied from the redux typedefs so that flowgen has a self-contained
-// setup to work with. I don't like this. Ideas welcome.
-export interface Action<T = any> {
-  type: T;
-}
-
-export interface AnyAction extends Action {
-  // Allows any extra properties to be defined in an action.
-  [extraProps: string]: any;
-}
-
-export interface Dispatch<A extends Action = AnyAction> {
-  <T extends A>(action: T): T;
-}
-// END HACK!
+import { Action, AnyAction, Dispatch } from 'redux';
 
 type Status =
   | 'ASYNC_COMPLETE'

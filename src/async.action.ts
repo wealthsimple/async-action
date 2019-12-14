@@ -1,7 +1,5 @@
+import { AnyAction, Action, Dispatch } from 'redux';
 import {
-  AnyAction,
-  Action,
-  Dispatch,
   AsyncAction,
   AsyncActionOptions,
   AsyncThunk,

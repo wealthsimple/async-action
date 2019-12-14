@@ -2726,7 +2726,7 @@ flow-typed@^2.5.1:
     which "^1.3.1"
     yargs "^12.0.2"
 
-flowgen@^1.10.0, flowgen@^1.9.0:
+flowgen@^1.9.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/flowgen/-/flowgen-1.10.0.tgz#a041ae31d543d22166e7ba7c296b8445deb3c2e4"
   integrity sha512-3lsoaa1vxGXhnkHuoE4mLPJi/klvpR3ID8R9CFJ/GBNi+cxJXecWQaUPrWMdNI5tGs8Y+7wrIZaCVFKFLQiGOg==
