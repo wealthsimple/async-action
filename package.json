@@ -51,7 +51,7 @@
     "jest-junit": "^8.0.0",
     "madge": "^3.4.4",
     "prettier": "^1.17.0",
-    "pretty-quick": "^1.10.0",
+    "pretty-quick": "^2.0.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
