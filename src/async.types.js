@@ -48,9 +48,10 @@ export type AAction<ActionType: string, PayloadType, ActionFields = {}> = {
 
 export type GetState<State> = () => State;
 
-export type AsyncThunk<Payload> = (
+export type AsyncThunk<Payload, ExtraArgument: * = *> = (
   dispatch: DispatchAPI<*>,
   getState: GetState<*>,
+  extraArgument: ExtraArgument,
 ) => Promise<Payload>;
 
 export type AsyncActionOptions = {

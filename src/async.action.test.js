@@ -295,4 +295,26 @@ describe('Async Action Creators', () => {
 
     expect(mockOperation).toHaveBeenCalledTimes(1);
   });
+
+  it('can correctly forward extraArguments', async () => {
+    const mockDispatch = jest.fn();
+    const mockGetState = () => ({});
+    const mockExtraArguments = 'extraArguments';
+    const mockOperation = jest.fn(() => Promise.resolve('a payload'));
+
+    const actionThunk = createAsyncAction(
+      { type: 'SOME_ACTION' },
+      mockOperation,
+      { identifier: 'anIdentifier' },
+    );
+
+    await actionThunk(mockDispatch, mockGetState, mockExtraArguments);
+
+    expect(mockOperation).toHaveBeenCalledTimes(1);
+    expect(mockOperation).toHaveBeenCalledWith(
+      mockDispatch,
+      mockGetState,
+      mockExtraArguments,
+    );
+  });
 });

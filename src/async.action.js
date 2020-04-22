@@ -40,15 +40,22 @@ const _dedupedPromises = {};
  * The optional 'options' parameter gives you more control:
  *   * identifier can be used to disambiguate two instances of the same action.
  */
-export const createAsyncAction = <AAction: AsyncAction<SimpleAction, *>>(
+export const createAsyncAction = <
+  AAction: AsyncAction<SimpleAction, *>,
+  ExtraArgument: * = *,
+>(
   action: $Diff<AAction, { meta: mixed, error: mixed, payload: mixed }>,
-  operation: AsyncThunk<$PropertyType<AAction, 'payload'>>,
+  operation: AsyncThunk<$PropertyType<AAction, 'payload'>, ExtraArgument>,
   { identifier, cache, ttlSeconds, overwriteCache }: AsyncActionOptions = {},
-): AsyncThunk<$NonMaybeType<$PropertyType<AAction, 'payload'>>> => {
+): AsyncThunk<
+  $NonMaybeType<$PropertyType<AAction, 'payload'>>,
+  ExtraArgument,
+> => {
   // We are returning a Thunk (a function that itself dispatches actions).
   const thunk = (
     dispatch: DispatchAPI<AAction>,
     getState: GetState<*>,
+    extraArgument: ExtraArgument,
   ): Promise<$PropertyType<AAction, 'payload'>> => {
     const isPendingSelector = makeIsPendingSelector(action.type, identifier);
     if (isPendingSelector(getState())) {
@@ -88,7 +95,7 @@ export const createAsyncAction = <AAction: AsyncAction<SimpleAction, *>>(
       meta: { status: 'ASYNC_PENDING', identifier },
     });
 
-    const promise = operation(dispatch, getState)
+    const promise = operation(dispatch, getState, extraArgument)
       .then(result => {
         dispatch({
           ...action,

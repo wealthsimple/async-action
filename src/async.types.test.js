@@ -109,5 +109,25 @@ describe('AsyncAction typedef tests', () => {
         store.dispatch(thunk);
       });
     });
+
+    describe('thunk withExtraArgument supplying the extra argument', () => {
+      type ExtraArgument = 'ExtraArgument';
+      type FooAsyncAction = AAction<'FOO', ExtraArgument>;
+
+      it('can enforce the type between the operation and the thunk caller', () => {
+        const operation = (
+          _dispatch,
+          _getState,
+          extraArguments: ExtraArgument,
+        ) => Promise.resolve(extraArguments);
+
+        const thunk = createAsyncAction<FooAsyncAction>(
+          simpleAction,
+          operation,
+        );
+
+        store.dispatch(thunk);
+      });
+    });
   });
 });
