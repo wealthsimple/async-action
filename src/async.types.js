@@ -12,7 +12,8 @@ type JSONObject = {
 type JSONArray = JSONLiteral[];
 
 // Deprecated. Use the AAction shorthand below.
-export type AsyncAction<Action: SimpleAction, PayloadType> = Action & {
+export type AsyncAction<Action: SimpleAction, PayloadType> = {
+  ...Action,
   payload?: ?PayloadType,
   error?: ?(JSONLiteral | Error),
   meta: {
@@ -30,21 +31,21 @@ export type AsyncAction<Action: SimpleAction, PayloadType> = Action & {
 
 // Shorthand form of AsyncAction:
 export type AAction<ActionType: string, PayloadType, ActionFields = {}> = {
+  ...ActionFields,
   type: ActionType,
-} & ActionFields & {
-    payload?: ?PayloadType,
-    error?: ?(JSONLiteral | Error),
-    meta: {
-      status:
-        | 'ASYNC_COMPLETE'
-        | 'ASYNC_PENDING'
-        | 'ASYNC_FAILED'
-        | 'ASYNC_DEDUPED'
-        | 'ASYNC_CACHED'
-        | 'ASYNC_RESET',
-      identifier?: string,
-    },
-  };
+  payload?: ?PayloadType,
+  error?: ?(JSONLiteral | Error),
+  meta: {
+    status:
+      | 'ASYNC_COMPLETE'
+      | 'ASYNC_PENDING'
+      | 'ASYNC_FAILED'
+      | 'ASYNC_DEDUPED'
+      | 'ASYNC_CACHED'
+      | 'ASYNC_RESET',
+    identifier?: string,
+  },
+};
 
 export type GetState<State> = () => State;
 
