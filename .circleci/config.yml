@@ -11,6 +11,7 @@ workflows:
           name: checkout
       - micro-app/security:
           name: security
+          context: wealthsimple
           requires:
             - checkout
       - micro-app/test:
