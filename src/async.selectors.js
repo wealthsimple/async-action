@@ -15,14 +15,12 @@ const selectAllAsyncRequests = state => state.asyncActions || {};
 export const makeAllPendingSelector = (
   actionType: string,
 ): AllPendingSelector =>
-  createSelector(
-    selectAllAsyncRequests,
-    allAsyncRequests =>
-      Object.keys(allAsyncRequests[actionType] || {}).filter(
-        k =>
-          !!allAsyncRequests[actionType][k] &&
-          !!allAsyncRequests[actionType][k].pending,
-      ),
+  createSelector(selectAllAsyncRequests, allAsyncRequests =>
+    Object.keys(allAsyncRequests[actionType] || {}).filter(
+      k =>
+        !!allAsyncRequests[actionType][k] &&
+        !!allAsyncRequests[actionType][k].pending,
+    ),
   );
 
 /**
@@ -36,20 +34,17 @@ export const makeIsPendingSelector = (
   identifier?: string,
   initialValue?: boolean = false,
 ): IsPendingSelector =>
-  createSelector(
-    selectAllAsyncRequests,
-    allAsyncRequests => {
-      if (!!allAsyncRequests && !allAsyncRequests[actionType]) {
-        return initialValue;
-      }
-      return (
-        !!allAsyncRequests &&
-        !!allAsyncRequests[actionType] &&
-        !!allAsyncRequests[actionType][identifier || ''] &&
-        !!allAsyncRequests[actionType][identifier || ''].pending
-      );
-    },
-  );
+  createSelector(selectAllAsyncRequests, allAsyncRequests => {
+    if (!!allAsyncRequests && !allAsyncRequests[actionType]) {
+      return initialValue;
+    }
+    return (
+      !!allAsyncRequests &&
+      !!allAsyncRequests[actionType] &&
+      !!allAsyncRequests[actionType][identifier || ''] &&
+      !!allAsyncRequests[actionType][identifier || ''].pending
+    );
+  });
 
 /**
  * Creates a selector that returns any error for the given actionType and optional
@@ -60,14 +55,12 @@ export const makeErrorSelector = (
   actionType: string,
   identifier?: string,
 ): ErrorSelector =>
-  createSelector(
-    selectAllAsyncRequests,
-    allAsyncRequests =>
-      !!allAsyncRequests &&
-      !!allAsyncRequests[actionType] &&
-      !!allAsyncRequests[actionType][identifier || '']
-        ? allAsyncRequests[actionType][identifier || ''].error || null
-        : null,
+  createSelector(selectAllAsyncRequests, allAsyncRequests =>
+    !!allAsyncRequests &&
+    !!allAsyncRequests[actionType] &&
+    !!allAsyncRequests[actionType][identifier || '']
+      ? allAsyncRequests[actionType][identifier || ''].error || null
+      : null,
   );
 
 /**
@@ -78,28 +71,25 @@ export const makeCachedResponseSelector = (
   identifier?: string,
   ttlSeconds?: number,
 ) =>
-  createSelector(
-    selectAllAsyncRequests,
-    allAsyncRequests => {
-      const cacheRecord =
-        !!allAsyncRequests &&
-        !!allAsyncRequests[actionType] &&
-        !!allAsyncRequests[actionType][identifier || '']
-          ? allAsyncRequests[actionType][identifier || '']
-              .__do_not_use__response_cache
-          : null;
+  createSelector(selectAllAsyncRequests, allAsyncRequests => {
+    const cacheRecord =
+      !!allAsyncRequests &&
+      !!allAsyncRequests[actionType] &&
+      !!allAsyncRequests[actionType][identifier || '']
+        ? allAsyncRequests[actionType][identifier || '']
+            .__do_not_use__response_cache
+        : null;
 
-      if (!cacheRecord) {
-        return null;
-      }
+    if (!cacheRecord) {
+      return null;
+    }
 
-      if (
-        undefined !== ttlSeconds &&
-        cacheRecord.secondsSinceEpoch + ttlSeconds < Date.now() / 1000
-      ) {
-        return null;
-      }
+    if (
+      undefined !== ttlSeconds &&
+      cacheRecord.secondsSinceEpoch + ttlSeconds < Date.now() / 1000
+    ) {
+      return null;
+    }
 
-      return cacheRecord.value;
-    },
-  );
+    return cacheRecord.value;
+  });
