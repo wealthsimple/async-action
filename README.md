@@ -214,7 +214,7 @@ const fetchAccounts = () => createAsyncAction(
   () => http.get('/api/accounts').then(r => r.data));
 
 const fetchTransactionsForAccount = (accountId) => createAsyncAction(
-  { type: 'ACCOUNT_TRANSACTIONS_REQUESTED', accountId },
+  { type: 'ACCOUNT_TRANSACTIONS_REQUESTED' },
   () => http.get(`/api/accounts/${accountId}/transactions`).then(r => r.data),
   { identifier: accountId });
 
