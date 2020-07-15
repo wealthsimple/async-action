@@ -55,7 +55,7 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "semantic-release": "^15.13.27"
+    "semantic-release": "^17.1.1"
   },
   "resolutions": {
     "handlebars": "^4.4.0",
