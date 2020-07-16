@@ -96,7 +96,7 @@ export const createAsyncAction = <
     });
 
     const promise = operation(dispatch, getState, extraArgument)
-      .then(result => {
+      .then((result) => {
         dispatch({
           ...action,
           payload: result,
@@ -107,7 +107,7 @@ export const createAsyncAction = <
         delete _dedupedPromises[`${action.type}(${identifier || ''})`];
         return result;
       })
-      .catch(error => {
+      .catch((error) => {
         try {
           dispatch({
             ...action,

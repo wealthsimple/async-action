@@ -37,7 +37,7 @@ describe('AsyncAction typedef tests', () => {
     });
 
     it('can create an AsyncAction with a semi-complex operation', () => {
-      const operation = _dispatch => Promise.resolve({ message: 'OHAI' });
+      const operation = (_dispatch) => Promise.resolve({ message: 'OHAI' });
       store.dispatch(createAsyncAction(simpleAction, operation));
     });
 
@@ -65,7 +65,7 @@ describe('AsyncAction typedef tests', () => {
       });
 
       it('can type and create an AsyncAction with a semi-complex operation', () => {
-        const operation = _dispatch => Promise.resolve({ message: 'OHAI' });
+        const operation = (_dispatch) => Promise.resolve({ message: 'OHAI' });
         const thunk = createAsyncAction<FooAsyncAction>(
           simpleAction,
           operation,

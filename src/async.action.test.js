@@ -100,9 +100,9 @@ describe('Async Action Creators', () => {
     const mockDispatch = jest
       .fn()
       // First call: pretend that set to pending succeeds.
-      .mockImplementationOnce(_a => _a)
+      .mockImplementationOnce((_a) => _a)
       // Second call: pretend dispatching the success case explodes in a reducer somewhere.
-      .mockImplementationOnce(_a => {
+      .mockImplementationOnce((_a) => {
         throw new Error('DISPATCH BOOM');
       });
     const mockGetState = () => ({});

@@ -6,7 +6,7 @@ import type {
   ErrorSelector,
 } from './async.types';
 
-const selectAllAsyncRequests = state => state.asyncActions || {};
+const selectAllAsyncRequests = (state) => state.asyncActions || {};
 
 /**
  * Creates a selector that returns a set of identifiers for the given action that
@@ -15,9 +15,9 @@ const selectAllAsyncRequests = state => state.asyncActions || {};
 export const makeAllPendingSelector = (
   actionType: string,
 ): AllPendingSelector =>
-  createSelector(selectAllAsyncRequests, allAsyncRequests =>
+  createSelector(selectAllAsyncRequests, (allAsyncRequests) =>
     Object.keys(allAsyncRequests[actionType] || {}).filter(
-      k =>
+      (k) =>
         !!allAsyncRequests[actionType][k] &&
         !!allAsyncRequests[actionType][k].pending,
     ),
@@ -34,7 +34,7 @@ export const makeIsPendingSelector = (
   identifier?: string,
   initialValue?: boolean = false,
 ): IsPendingSelector =>
-  createSelector(selectAllAsyncRequests, allAsyncRequests => {
+  createSelector(selectAllAsyncRequests, (allAsyncRequests) => {
     if (!!allAsyncRequests && !allAsyncRequests[actionType]) {
       return initialValue;
     }
@@ -55,7 +55,7 @@ export const makeErrorSelector = (
   actionType: string,
   identifier?: string,
 ): ErrorSelector =>
-  createSelector(selectAllAsyncRequests, allAsyncRequests =>
+  createSelector(selectAllAsyncRequests, (allAsyncRequests) =>
     !!allAsyncRequests &&
     !!allAsyncRequests[actionType] &&
     !!allAsyncRequests[actionType][identifier || '']
@@ -71,7 +71,7 @@ export const makeCachedResponseSelector = (
   identifier?: string,
   ttlSeconds?: number,
 ) =>
-  createSelector(selectAllAsyncRequests, allAsyncRequests => {
+  createSelector(selectAllAsyncRequests, (allAsyncRequests) => {
     const cacheRecord =
       !!allAsyncRequests &&
       !!allAsyncRequests[actionType] &&
