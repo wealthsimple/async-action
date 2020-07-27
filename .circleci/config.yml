@@ -1,5 +1,9 @@
 version: 2.1
 
+references:
+  parameters: &parameters
+    node_version: '12.18.3'
+
 orbs:
   micro-app: wealthsimple/micro-app@dev:master
 
@@ -8,25 +12,31 @@ workflows:
   build-and-deploy:
     jobs:
       - micro-app/checkout:
+          <<: *parameters
           name: checkout
       - micro-app/security:
+          <<: *parameters
           name: security
           context: wealthsimple
           requires:
             - checkout
       - micro-app/test:
+          <<: *parameters
           name: test
           requires:
             - checkout
       - micro-app/coverage:
+          <<: *parameters
           name: coverage
           requires:
             - checkout
       - micro-app/static_checks:
+          <<: *parameters
           name: static_checks
           requires:
             - checkout
       - micro-app/semantic_release:
+          <<: *parameters
           name: semantic_release
           context: wealthsimple
           filters:
