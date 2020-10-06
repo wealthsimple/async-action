@@ -34,6 +34,7 @@ workflows:
       - micro-app/semantic_release:
           <<: *parameters
           name: semantic_release
+          npm_publish_publicly: true
           context: wealthsimple
           filters:
             branches:
