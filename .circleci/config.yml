@@ -6,6 +6,7 @@ references:
 
 orbs:
   micro-app: wealthsimple/micro-app@dev:master
+  sonarqube: wealthsimple/sonarqube-scanner@dev:master
 
 workflows:
   version: 2.1
@@ -25,11 +26,6 @@ workflows:
           name: test
           requires:
             - checkout
-      - micro-app/coverage:
-          <<: *parameters
-          name: coverage
-          requires:
-            - checkout
       - micro-app/static_checks:
           <<: *parameters
           name: static_checks
@@ -47,4 +43,16 @@ workflows:
             - static_checks
             - security
             - test
-            - coverage
+      - sonarqube/scan:
+          name: sonar_scan
+          context: wealthsimple
+          project_name: '${CIRCLE_REPONAME}'
+          project_branch: '${CIRCLE_BRANCH}'
+          requires:
+            - checkout
+            - test # generates the coverage files
+      - sonarqube/check_quality_gate:
+          name: quality_gate
+          context: wealthsimple
+          requires:
+            - sonar_scan
