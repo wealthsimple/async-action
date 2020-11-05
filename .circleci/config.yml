@@ -14,7 +14,9 @@ workflows:
     jobs:
       - micro-app/checkout:
           <<: *parameters
+          context: wealthsimple
           name: checkout
+          node_version: '12.18.3'
       - micro-app/security:
           <<: *parameters
           name: security
@@ -24,10 +26,12 @@ workflows:
       - micro-app/test:
           <<: *parameters
           name: test
+          context: wealthsimple
           requires:
             - checkout
       - micro-app/static_checks:
           <<: *parameters
+          context: wealthsimple
           name: static_checks
           requires:
             - checkout
