@@ -69,7 +69,8 @@ export type ErrorInfo = {
 };
 
 export type AsyncActionRecord = {
-  pending: boolean,
+  pending?: boolean,
+  completed?: boolean,
   error?: ErrorInfo,
   __do_not_use__response_cache?: {
     value: mixed,

@@ -20,6 +20,8 @@ export const asyncActionReducer = (
         [action.type]: {
           ...state[action.type],
           [action.meta.identifier || '']: {
+            completed: !!state[action.type]?.[action.meta.identifier || '']
+              ?.completed,
             pending: true,
           },
         },
@@ -29,14 +31,17 @@ export const asyncActionReducer = (
         ...state,
         [action.type]: {
           ...state[action.type],
-          [action.meta.identifier || '']: action.meta.cache
-            ? {
-                __do_not_use__response_cache: {
-                  value: action.payload,
-                  secondsSinceEpoch: Math.floor(Date.now() / 1000),
-                },
-              }
-            : undefined,
+          [action.meta.identifier || '']: {
+            completed: true,
+            ...(action.meta.cache
+              ? {
+                  __do_not_use__response_cache: {
+                    value: action.payload,
+                    secondsSinceEpoch: Math.floor(Date.now() / 1000),
+                  },
+                }
+              : {}),
+          },
         },
       };
     case 'ASYNC_FAILED':

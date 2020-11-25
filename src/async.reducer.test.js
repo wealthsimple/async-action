@@ -3,77 +3,71 @@ import { asyncActionReducer } from './async.reducer';
 import { resetAsyncAction } from './async.action';
 
 describe('AsyncAction reducer', () => {
-  it('should record a pending request', () => {
-    const state = {};
-    const pendingAction = {
-      type: 'GET_FOOS_BY_NAME',
-      meta: {
-        status: 'ASYNC_PENDING',
-        identifier: 'nameOfTheFoo',
-      },
-    };
-
-    const newState = asyncActionReducer(state, pendingAction);
-
-    expect(newState).toEqual({
-      GET_FOOS_BY_NAME: {
-        nameOfTheFoo: {
-          pending: true,
+  describe('a pending request', () => {
+    it('should record a pending request', () => {
+      const state = {};
+      const pendingAction = {
+        type: 'GET_FOOS_BY_NAME',
+        meta: {
+          status: 'ASYNC_PENDING',
+          identifier: 'nameOfTheFoo',
         },
-      },
-    });
+      };
 
-    // Also check that the record is removed when the request
-    // completes.
-    const completeAction = {
-      type: 'GET_FOOS_BY_NAME',
-      meta: {
-        status: 'ASYNC_COMPLETE',
-        identifier: 'nameOfTheFoo',
-      },
-    };
+      const newState = asyncActionReducer(state, pendingAction);
 
-    const finalState = asyncActionReducer(newState, completeAction);
-
-    expect(finalState).toEqual({
-      GET_FOOS_BY_NAME: {},
-    });
-  });
-
-  it('should record a pending request', () => {
-    const state = {};
-    const pendingAction = {
-      type: 'GET_FOOS_BY_NAME',
-      meta: {
-        status: 'ASYNC_PENDING',
-        identifier: 'nameOfTheFoo',
-      },
-    };
-
-    const newState = asyncActionReducer(state, pendingAction);
-
-    expect(newState).toEqual({
-      GET_FOOS_BY_NAME: {
-        nameOfTheFoo: {
-          pending: true,
+      expect(newState).toEqual({
+        GET_FOOS_BY_NAME: {
+          nameOfTheFoo: {
+            completed: false,
+            pending: true,
+          },
         },
-      },
+      });
+
+      // Also check that the request is marked as completed
+      const completeAction = {
+        type: 'GET_FOOS_BY_NAME',
+        meta: {
+          status: 'ASYNC_COMPLETE',
+          identifier: 'nameOfTheFoo',
+        },
+      };
+
+      const finalState = asyncActionReducer(newState, completeAction);
+
+      expect(finalState).toEqual({
+        GET_FOOS_BY_NAME: {
+          nameOfTheFoo: { completed: true },
+        },
+      });
     });
 
-    // Also check that the record is removed when the request
-    // completes.
-    const completeAction = {
-      type: 'GET_FOOS_BY_NAME',
-      meta: {
-        status: 'ASYNC_COMPLETE',
-        identifier: 'nameOfTheFoo',
-      },
-    };
+    it('should persist whether the action has completed previously', () => {
+      const state = {
+        GET_FOOS_BY_NAME: {
+          nameOfTheFoo: { completed: true },
+        },
+      };
 
-    const finalState = asyncActionReducer(newState, completeAction);
+      const pendingAction = {
+        type: 'GET_FOOS_BY_NAME',
+        meta: {
+          status: 'ASYNC_PENDING',
+          identifier: 'nameOfTheFoo',
+        },
+      };
 
-    expect(finalState).toEqual({
-      GET_FOOS_BY_NAME: {},
+      const newState = asyncActionReducer(state, pendingAction);
+
+      expect(newState).toEqual({
+        GET_FOOS_BY_NAME: {
+          nameOfTheFoo: {
+            completed: true,
+            pending: true,
+          },
+        },
+      });
     });
   });
 
@@ -95,6 +89,7 @@ describe('AsyncAction reducer', () => {
     expect(newState).toEqual({
       GET_FOOS_BY_NAME: {
         nameOfTheFoo: {
+          completed: true,
           __do_not_use__response_cache: {
             value: 'a payload',
             secondsSinceEpoch: 1522620261,

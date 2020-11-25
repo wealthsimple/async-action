@@ -3,6 +3,7 @@ import {
   makeIsPendingSelector,
   makeErrorSelector,
   makeAllPendingSelector,
+  makeIsInitialRequestPendingSelector,
 } from './async.selectors';
 
 describe('AsyncSelectors', () => {
@@ -14,8 +15,8 @@ describe('AsyncSelectors', () => {
     state = {
       asyncActions: {
         FOO_ACTION: {
-          fooId0: { pending: true },
-          fooId1: { pending: true },
+          fooId0: { pending: true, completed: false },
+          fooId1: { pending: true, completed: true },
           fooId2: {
             pending: false,
             error: {
@@ -25,7 +26,10 @@ describe('AsyncSelectors', () => {
             },
           },
         },
-        FOO_ACTION_1: {},
+        FOO_ACTION_1: {
+          '': { completed: true },
+        },
+        FOO_ACTION_2: undefined,
       },
     };
   });
@@ -96,5 +100,54 @@ describe('AsyncSelectors', () => {
     const fooActionAllPendingSelector = makeAllPendingSelector('FOO_ACTION');
 
     expect(fooActionAllPendingSelector(state)).toEqual(['fooId0', 'fooId1']);
+  });
+
+  describe('makeIsInitialRequestPendingSelector', () => {
+    it('returns the initial value when the request is not yet in the store', () => {
+      const unknownActionInitialPendingSelector = makeIsInitialRequestPendingSelector(
+        'UNKNOWN_ACTION',
+        undefined,
+        true,
+      );
+
+      expect(unknownActionInitialPendingSelector(state)).toEqual(true);
+    });
+
+    it('returns false if the result is completed', () => {
+      const fooAction1InitialPendingSelector = makeIsInitialRequestPendingSelector(
+        'FOO_ACTION_1',
+        undefined,
+        true,
+      );
+
+      expect(fooAction1InitialPendingSelector(state)).toBe(false);
+    });
+
+    it('returns true if the result is pending and never completed', () => {
+      const fooActionInitialPendingSelector = makeIsInitialRequestPendingSelector(
+        'FOO_ACTION',
+        'fooId0',
+      );
+
+      expect(fooActionInitialPendingSelector(state)).toBe(true);
+    });
+
+    it('returns false if the result is pending and previously completed', () => {
+      const fooActionInitialPendingSelector = makeIsInitialRequestPendingSelector(
+        'FOO_ACTION',
+        'fooId1',
+        true,
+      );
+
+      expect(fooActionInitialPendingSelector(state)).toBe(false);
+    });
+
+    it('returns false if the result is not pending and never completed', () => {
+      const fooAction2InitialPendingSelector = makeIsInitialRequestPendingSelector(
+        'FOO_ACTION_2',
+      );
+
+      expect(fooAction2InitialPendingSelector(state)).toBe(false);
+    });
   });
 });

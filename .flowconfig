@@ -13,6 +13,7 @@
 [libs]
 
 [options]
+esproposal.optional_chaining=enable
 
 [lints]
 all=error

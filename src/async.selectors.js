@@ -64,6 +64,37 @@ export const makeErrorSelector = (
   );
 
 /**
+ * XXX NOTE XXX
+ * Do not use makeIsInitialRequestPendingSelector if possible.
+ * UI should be a pure function of current state.
+ * You should be able to determine if a request has never completed
+ * by declaratively checking whether the relevant piece of state is undefined.
+ * makeIsInitialRequestPendingSelector may be removed at any time
+ * in a future release.
+ *
+ * -----------------------------------------------
+ *
+ * Creates a selector that returns true if the given action is pending without ever having completed.
+ * If the action has completed at least once, the selector returns false.
+ * The optional identifier argument allows you to match a specific instance
+ * of an action created with an identifier.
+ */
+export const makeIsInitialRequestPendingSelector = (
+  actionType: string,
+  identifier?: string = '',
+  initialValue?: boolean = false,
+): IsPendingSelector =>
+  createSelector(selectAllAsyncRequests, (allAsyncRequests) => {
+    const request = allAsyncRequests?.[actionType]?.[identifier];
+
+    if (!request) {
+      return initialValue;
+    }
+
+    return request.completed ? false : !!request.pending;
+  });
+
+/**
  * Internal use only
  */
 export const makeCachedResponseSelector = (
