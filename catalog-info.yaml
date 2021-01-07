@@ -1,0 +1,12 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: async-action
+  description: Cleaner Async Thunks in Redux
+  tags:
+    - javascript
+    - open-source
+spec:
+  lifecycle: production
+  type: library
