@@ -3,3 +3,4 @@ coverage/*
 .idea
 *.log
 .DS_Store
+.yarn-cache/*
