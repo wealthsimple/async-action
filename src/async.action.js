@@ -12,19 +12,19 @@ import {
   makeCachedResponseSelector,
 } from './async.selectors';
 
-export const isPending = (action: $Subtype<SimpleAction>) =>
-  !!action.meta && action.meta.status === 'ASYNC_PENDING';
+type PossibleAsyncAction = { [key: string]: any };
+export const isPending = (action: PossibleAsyncAction) =>
+  action.meta?.status === 'ASYNC_PENDING';
 
-export const isComplete = (action: $Subtype<SimpleAction>) =>
-  !!action.meta &&
-  (action.meta.status === 'ASYNC_COMPLETE' ||
-    action.meta.status === 'ASYNC_CACHED');
+export const isComplete = (action: PossibleAsyncAction) =>
+  action.meta?.status === 'ASYNC_COMPLETE' ||
+  action.meta?.status === 'ASYNC_CACHED';
 
-export const isFailed = (action: $Subtype<SimpleAction>) =>
-  !!action.meta && action.meta.status === 'ASYNC_FAILED';
+export const isFailed = (action: PossibleAsyncAction) =>
+  action.meta?.status === 'ASYNC_FAILED';
 
-export const isBeingReset = (action: $Subtype<SimpleAction>) =>
-  !!action.meta && action.meta.status === 'ASYNC_RESET';
+export const isBeingReset = (action: PossibleAsyncAction) =>
+  action.meta?.status === 'ASYNC_RESET';
 
 const _dedupedPromises = {};
 

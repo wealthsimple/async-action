@@ -1,7 +1,7 @@
 // @flow
 import type { DispatchAPI } from 'redux';
 
-export type SimpleAction = { type: $Subtype<string> };
+export type SimpleAction = { type: any };
 
 // Intentionally recursive type.
 // eslint-disable-next-line no-use-before-define

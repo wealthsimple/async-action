@@ -98,7 +98,7 @@ export const makeIsInitialRequestPendingSelector = (
  * Internal use only
  */
 export const makeCachedResponseSelector = (
-  actionType: $Subtype<string>,
+  actionType: any,
   identifier?: string,
   ttlSeconds?: number,
 ) =>
