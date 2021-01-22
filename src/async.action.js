@@ -129,7 +129,8 @@ export const createAsyncAction = <
 export const resetAsyncAction = (
   type: string,
   identifier?: string,
-): SimpleAction => ({
-  type,
-  meta: { status: 'ASYNC_RESET', identifier },
-});
+): SimpleAction =>
+  ({
+    type,
+    meta: { status: 'ASYNC_RESET', identifier },
+  }: SimpleAction);
