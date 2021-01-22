@@ -7,8 +7,8 @@ import {
 } from './async.selectors';
 
 describe('AsyncSelectors', () => {
-  let state;
-  let fakeError;
+  let state: { [string]: any };
+  let fakeError: Error;
 
   beforeEach(() => {
     fakeError = new Error('BOOM');

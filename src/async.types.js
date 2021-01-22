@@ -56,7 +56,7 @@ export type GetState<State> = () => State;
 export type AsyncThunk<Payload, ExtraArgument: * = *> = (
   dispatch: DispatchAPI<*>,
   getState: GetState<*>,
-  extraArgument: ExtraArgument,
+  extraArgument?: ExtraArgument,
 ) => Promise<Payload>;
 
 export type AsyncActionOptions = {

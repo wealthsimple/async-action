@@ -122,7 +122,7 @@ describe('AsyncAction typedef tests', () => {
         const operation = (
           _dispatch,
           _getState,
-          extraArguments: ExtraArgument,
+          extraArguments?: ExtraArgument,
         ) => Promise.resolve(extraArguments);
 
         const thunk = createAsyncAction<FooAsyncAction>(

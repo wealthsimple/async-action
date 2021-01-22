@@ -13,20 +13,20 @@ import {
 } from './async.selectors';
 
 type PossibleAsyncAction = { [key: string]: any };
-export const isPending = (action: PossibleAsyncAction) =>
+export const isPending = (action: PossibleAsyncAction): boolean =>
   action.meta?.status === 'ASYNC_PENDING';
 
-export const isComplete = (action: PossibleAsyncAction) =>
+export const isComplete = (action: PossibleAsyncAction): boolean =>
   action.meta?.status === 'ASYNC_COMPLETE' ||
   action.meta?.status === 'ASYNC_CACHED';
 
-export const isFailed = (action: PossibleAsyncAction) =>
+export const isFailed = (action: PossibleAsyncAction): boolean =>
   action.meta?.status === 'ASYNC_FAILED';
 
-export const isBeingReset = (action: PossibleAsyncAction) =>
+export const isBeingReset = (action: PossibleAsyncAction): boolean =>
   action.meta?.status === 'ASYNC_RESET';
 
-const _dedupedPromises = {};
+const _dedupedPromises: { [key: string]: Promise<any> } = {};
 
 /**
  * Helper for API requests or other async actions.
@@ -55,7 +55,7 @@ export const createAsyncAction = <
   const thunk = (
     dispatch: DispatchAPI<AAction>,
     getState: GetState<*>,
-    extraArgument: ExtraArgument,
+    extraArgument?: ExtraArgument,
   ): Promise<$PropertyType<AAction, 'payload'>> => {
     const isPendingSelector = makeIsPendingSelector(action.type, identifier);
     if (isPendingSelector(getState())) {
@@ -126,7 +126,10 @@ export const createAsyncAction = <
   return thunk;
 };
 
-export const resetAsyncAction = (type: string, identifier?: string) => ({
+export const resetAsyncAction = (
+  type: string,
+  identifier?: string,
+): SimpleAction => ({
   type,
   meta: { status: 'ASYNC_RESET', identifier },
 });
