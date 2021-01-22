@@ -1,63 +1,53 @@
 version: 2.1
 
-references:
-  parameters: &parameters
-    node_version: '12.18.3'
-
 orbs:
-  micro-app: wealthsimple/micro-app@dev:master
-  sonarqube: wealthsimple/sonarqube-scanner@dev:master
+  javascript: wealthsimple/javascript@dev:master
+  sonarqube: wealthsimple/sonarqube@dev:master
+
+references:
+  javascript_params: &javascript_params
+    node_version: '12'
+
+jobs:
+  test:
+    executor: javascript/node
+    steps:
+      - checkout
+      - javascript/attach_code_workspace
+      - javascript/yarn_install_dependencies
+      - javascript/run_unit_tests
+      - sonarqube/scan
+  convert_to_typescript:
+    executor: javascript/node
+    steps:
+      - checkout
+      - javascript/attach_code_workspace
+      - run:
+          command: ./scripts/tsconvert.bash
 
 workflows:
   version: 2.1
   build-and-deploy:
     jobs:
-      - micro-app/checkout:
-          <<: *parameters
-          context: wealthsimple
-          name: checkout
-          node_version: '12.18.3'
-      - micro-app/security:
-          <<: *parameters
+      - javascript/security:
           name: security
           context: wealthsimple
-          requires:
-            - checkout
-      - micro-app/test:
-          <<: *parameters
-          name: test
+      - test:
           context: wealthsimple
-          requires:
-            - checkout
-      - micro-app/static_checks:
-          <<: *parameters
+          name: test
+      - javascript/static_checks:
           context: wealthsimple
           name: static_checks
-          requires:
-            - checkout
-      - micro-app/semantic_release:
-          <<: *parameters
-          name: semantic_release
-          npm_publish_publicly: true
+      - convert_to_typescript:
           context: wealthsimple
-          filters:
-            branches:
-              only: master
+      - javascript/semantic_release:
+          context: wealthsimple
+          npm_publish_publicly: true
           requires:
-            - checkout
             - static_checks
             - security
             - test
-      - sonarqube/scan:
-          name: sonar_scan
-          context: wealthsimple
-          project_name: '${CIRCLE_REPONAME}'
-          project_branch: '${CIRCLE_BRANCH}'
-          requires:
-            - checkout
-            - test # generates the coverage files
-      - sonarqube/check_quality_gate:
-          name: quality_gate
-          context: wealthsimple
-          requires:
-            - sonar_scan
+            - convert_to_typescript
+          filters:
+            branches:
+              only: master

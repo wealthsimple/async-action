@@ -50,7 +50,6 @@ function add_typescript_dependencies() {
     typescript \
     @typescript-eslint/parser \
     @typescript-eslint/eslint-plugin \
-    ts-loader \
     ts-jest
 }
 
@@ -107,6 +106,7 @@ EOF
 {
   "extends": "./tsconfig",
   "compilerOptions": {
+    "declaration": true,
     "noEmit": false,
     "outDir": "./dist",
   },
@@ -211,29 +211,6 @@ function migrate() {
   yarn flowts ./migrations
 }
 
-function substitute() {
-  for directory in jest src; do
-    find "${directory}" -type f -name '*.ts' |
-      xargs sed -i '' -E "${1}"
-  done
-}
-
-function remove_babel_polyfill() {
-  substitute "s/import '@babel\/polyfill';//";
-}
-
-function fix_javascript_imports() {
-  substitute "s/from '(.+)\.js';/from '\1';/"
-}
-
-function fix_decimal_imports() {
-  substitute "s/'decimal'/'decimal.js'/"
-}
-
-function fix_moment_imports() {
-  substitute "s/import type Moment from 'moment';/import { Moment } from 'moment';/"
-}
-
 function expect_errors() {
   yarn ts-migrate reignore .
 }
@@ -274,10 +251,6 @@ if git diff --quiet; then
   configure_typescript
   install_ts_migrate
   migrate
-  fix_javascript_imports
-  fix_decimal_imports
-  fix_moment_imports
-  remove_babel_polyfill
   format
   lint_fix
   expect_errors

@@ -23,7 +23,11 @@ import {
 describe('AsyncAction typedef tests', () => {
   type FooAction = { type: 'FOO' };
   let simpleAction: FooAction;
-  let store: Store<{}, AsyncThunk<*>, DispatchAPI<AsyncThunk<*>>>;
+  let store: Store<
+    { [string]: any },
+    AsyncThunk<*>,
+    DispatchAPI<AsyncThunk<*>>,
+  >;
 
   beforeEach(() => {
     simpleAction = { type: 'FOO', param: 42 };

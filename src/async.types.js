@@ -30,7 +30,11 @@ export type AsyncAction<Action: SimpleAction, PayloadType> = {
 };
 
 // Shorthand form of AsyncAction:
-export type AAction<ActionType: string, PayloadType, ActionFields = {}> = {
+export type AAction<
+  ActionType: string,
+  PayloadType,
+  ActionFields = { [string]: any },
+> = {
   ...ActionFields,
   type: ActionType,
   payload?: ?PayloadType,

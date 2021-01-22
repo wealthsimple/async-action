@@ -6,6 +6,7 @@
   "scripts": {
     "check_types": "yarn flow",
     "flow": "flow check",
+    "lint": "eslint 'src/*'",
     "lint:js": "eslint 'src/*'",
     "lint:css": "echo 'No CSS in this repo.'",
     "security": "yarn audit",

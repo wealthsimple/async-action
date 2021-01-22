@@ -108,16 +108,12 @@ export const createAsyncAction = <
         return result;
       })
       .catch((error) => {
-        try {
-          dispatch({
-            ...action,
-            payload: null,
-            error,
-            meta: { status: 'ASYNC_FAILED', identifier },
-          });
-        } catch (e) {
-          throw e;
-        }
+        dispatch({
+          ...action,
+          payload: null,
+          error,
+          meta: { status: 'ASYNC_FAILED', identifier },
+        });
 
         delete _dedupedPromises[`${action.type}(${identifier || ''})`];
         throw error;

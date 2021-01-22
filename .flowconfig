@@ -22,3 +22,4 @@ deprecated-type=off
 sketchy-null-bool=off
 dynamic-export=off
 deprecated-utility=off
+unclear-type=off
