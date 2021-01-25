@@ -36,9 +36,9 @@ jobs:
           name: Update release branch if necessary
           command: |
             git checkout flowtype-releases
-            git merge master
             git config user.email "noreply@wealthsimple.com"
             git config user.name "Wolfbot"
+            git merge master
             git push origin flowtype-releases
 
   update_typescript_release_branch:
@@ -50,9 +50,9 @@ jobs:
           name: Update release branch if necessary
           command: |
             git checkout typescript-releases
-            git merge master
             git config user.email "noreply@wealthsimple.com"
             git config user.name "Wolfbot"
+            git merge master
             git push origin typescript-releases
 
   publish_typescript:

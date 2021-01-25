@@ -124,6 +124,7 @@ EOF
     | jq '.scripts.build = "tsc -p tsconfig.build.json"' \
     | jq '.name = "@wealthsimple/async-action-ts"' \
     | jq '.release.branches[0].name = "typescript-releases"' \
+    | jq 'del(.release.plugins[4])' \
     > package.json.tmp
 
   mv package.json.tmp package.json
