@@ -150,8 +150,6 @@ workflows:
           name: Semantic Release (FlowType)
           context: wealthsimple
           npm_publish_publicly: true
-          requires:
-            - check_typescript_convertability
           filters:
             branches:
               only: flowtype-releases
