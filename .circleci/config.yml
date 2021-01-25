@@ -97,7 +97,7 @@ workflows:
             - static_checks
             - security
             - test
-            - convert_to_typescript
+            - check_typescript_convertability
           filters:
             branches:
               only: master
@@ -107,7 +107,6 @@ workflows:
           filters:
             branches:
               ignore:
-                - master
                 - typescript-releases
 
       - update_typescript_release_branch:
@@ -117,7 +116,7 @@ workflows:
             - static_checks
             - security
             - test
-            - convert_to_typescript
+            - check_typescript_convertability
           filters:
             branches:
               only: master
