@@ -17,7 +17,8 @@ jobs:
       - javascript/yarn_install_dependencies
       - javascript/run_unit_tests
       - sonarqube/scan
-  convert_to_typescript:
+
+  check_typescript_convertability:
     executor: javascript/node
     steps:
       - checkout
@@ -25,7 +26,8 @@ jobs:
       - run:
           name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
-  convert_to_typescript_and_publish:
+
+  update_typescript_release_branch:
     executor: javascript/node
     steps:
       - checkout
@@ -33,16 +35,18 @@ jobs:
       - run:
           name: Update release branch if necessary
           command: |
-            export RELEASE_BRANCH=$(jq '.release.branches[0].name' package.json)
-            echo "Detected release branch $RELEASE_BRANCH"
-            if [ $RELEASE_BRANCH -neq null]; then
-              git checkout $RELEASE_BRANCH
-              git merge master
-              git config user.email "noreply@wealthsimple.com"
-              git config user.name "Wolfbot"
-              git push origin $RELEASE_BRANCH
-            fi
-      - run:
+            git checkout typescript-releases
+            git merge master
+            git config user.email "noreply@wealthsimple.com"
+            git config user.name "Wolfbot"
+            git push origin typescript-releases
+
+  publish_typescript:
+    executor: javascript/node
+    steps:
+        - checkout
+        - javascript/attach_code_workspace
+        - run:
           name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
       - run:
@@ -64,12 +68,27 @@ workflows:
       - javascript/security:
           name: security
           context: wealthsimple
+          filters:
+            branches:
+              ignore:
+                - typescript-releases
+
       - test:
           context: wealthsimple
           name: test
+          filters:
+            branches:
+              ignore:
+                - typescript-releases
+
       - javascript/static_checks:
           context: wealthsimple
           name: static_checks
+          filters:
+            branches:
+              ignore:
+                - typescript-releases
+
       - javascript/semantic_release:
           name: Semantic Release (FlowType)
           context: wealthsimple
@@ -82,13 +101,16 @@ workflows:
           filters:
             branches:
               only: master
-      - convert_to_typescript:
+
+      - check_typescript_convertability:
           context: wealthsimple
           filters:
             branches:
               ignore:
                 - master
-      - convert_to_typescript_and_publish:
+                - typescript-releases
+
+      - update_typescript_release_branch:
           name: Semantic Release (TypeScript)
           context: wealthsimple
           requires:
@@ -99,3 +121,10 @@ workflows:
           filters:
             branches:
               only: master
+       
+      - publish_typescript:
+          name: Semantic Release (TypeScript)
+          context: Wealthsimple
+          filters:
+            branches:
+              only: typescript-releases
