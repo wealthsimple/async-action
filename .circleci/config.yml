@@ -31,14 +31,17 @@ jobs:
       - checkout
       - javascript/attach_code_workspace
       - run:
-          name: Switch to TypeScript release branch
-          command: git checkout typescript-releases
-      - run:
-          name: Update TypeScript release branch to match master
-          # Warning: Cherry-pick only works here because this job runs on master and we
-          # squash merge. If this works, we can look into using a separate flow-release
-          # branch too in order to keep master clean of version commits.
-          command: git cherry-pick ${CIRCLE_SHA1} && git push origin typescript-releases
+          name: Update release branch if necessary
+          command: |
+            export RELEASE_BRANCH=$(jq '.release.branches[0].name' package.json)
+            echo "Detected release branch $RELEASE_BRANCH"
+            if [ $RELEASE_BRANCH -neq null]; then
+              git checkout $RELEASE_BRANCH
+              git merge master
+              git config user.email "noreply@wealthsimple.com"
+              git config user.name "Wolfbot"
+              git push origin $RELEASE_BRANCH
+            fi
       - run:
           name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
