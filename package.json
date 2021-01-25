@@ -16,7 +16,7 @@
     "cdc": "madge --no-spinner --exclude .yarn-cache --circular src",
     "prebuild": "rm -rf dist",
     "build": "yarn babel -d dist --ignore **/test.js src",
-    "prepublishOnly": "yarn lint:js && yarn test && yarn cdc && yarn build"
+    "prepublishOnly": "yarn build"
   },
   "author": "sdavenport@wealthsimple.com",
   "license": "MIT",

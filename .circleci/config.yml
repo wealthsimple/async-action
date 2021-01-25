@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  javascript: wealthsimple/javascript@dev:SethDavenport-patch-1
+  javascript: wealthsimple/javascript@dev:master
   sonarqube: wealthsimple/sonarqube@dev:master
 
 references:
@@ -23,7 +23,21 @@ jobs:
       - checkout
       - javascript/attach_code_workspace
       - run:
+          name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
+  convert_to_typescript_and_publish:
+    executor: javascript/node
+    steps:
+      - checkout
+      - javascript/attach_code_workspace
+      - run:
+          name: Convert to TypeScript
+          command: ./scripts/tsconvert.bash
+      - run: |
+          # This package is on npm, not Nexus.
+          export NPM_TOKEN="${PUBLIC_NPM_TOKEN}"
+          npm set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          GITHUB_TOKEN="${DEVTOOLS_GITHUB_API_TOKEN}" yarn run semantic-release
 
 workflows:
   version: 2.1
@@ -38,11 +52,27 @@ workflows:
       - javascript/static_checks:
           context: wealthsimple
           name: static_checks
-      - convert_to_typescript:
-          context: wealthsimple
       - javascript/semantic_release:
+          name: Semantic Release (FlowType)
           context: wealthsimple
           npm_publish_publicly: true
+          requires:
+            - static_checks
+            - security
+            - test
+            - convert_to_typescript
+          filters:
+            branches:
+              only: master
+      - convert_to_typescript:
+          context: wealthsimple
+          filters:
+            branches:
+              ignore:
+                - master
+      - convert_to_typescript_and_publish:
+          name: Semantic Release (TypeScript)
+          context: wealthsimple
           requires:
             - static_checks
             - security

@@ -113,10 +113,13 @@ EOF
   "exclude": ["**/*.test.ts", "**/*.spec.ts", "**/__mocks__/*"]
 }
 EOF
-
+  
+  # Publish TS version under a different package name until we have the full
+  # stack sorted out.  
   jq 'del(.jest)' package.json \
     | jq 'del(.scripts.flow)' \
     | jq 'del(.scripts."build:copy-files")' \
+    | jq '.name = "@wealthsimple/async-action-ts"' \
     | jq '.scripts.check_types = "tsc"' \
     | jq '.scripts.prettier = "prettier --write \"./+(src)/**/*.ts\""' \
     | jq '.scripts.build = "tsc -p tsconfig.build.json"' \
