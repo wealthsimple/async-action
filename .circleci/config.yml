@@ -27,6 +27,20 @@ jobs:
           name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
 
+  update_flowtype_release_branch:
+    executor: javascript/node
+    steps:
+      - checkout
+      - javascript/attach_code_workspace
+      - run:
+          name: Update release branch if necessary
+          command: |
+            git checkout flowtype-releases
+            git merge master
+            git config user.email "noreply@wealthsimple.com"
+            git config user.name "Wolfbot"
+            git push origin flowtype-releases
+
   update_typescript_release_branch:
     executor: javascript/node
     steps:
@@ -72,6 +86,7 @@ workflows:
             branches:
               ignore:
                 - typescript-releases
+                - flowtype-releases
 
       - test:
           context: wealthsimple
@@ -80,6 +95,7 @@ workflows:
             branches:
               ignore:
                 - typescript-releases
+                - flowtype-releases
 
       - javascript/static_checks:
           context: wealthsimple
@@ -88,11 +104,19 @@ workflows:
             branches:
               ignore:
                 - typescript-releases
+                - flowtype-releases
 
-      - javascript/semantic_release:
-          name: Semantic Release (FlowType)
+      - check_typescript_convertability:
           context: wealthsimple
-          npm_publish_publicly: true
+          filters:
+            branches:
+              ignore:
+                - typescript-releases
+                - flowtype-releases
+
+      - update_flowtype_release_branch:
+          name: Update FlowType release branch
+          context: wealthsimple
           requires:
             - static_checks
             - security
@@ -102,15 +126,8 @@ workflows:
             branches:
               only: master
 
-      - check_typescript_convertability:
-          context: wealthsimple
-          filters:
-            branches:
-              ignore:
-                - typescript-releases
-
       - update_typescript_release_branch:
-          name: Update typescript release branch
+          name: Update TypeScript release branch
           context: wealthsimple
           requires:
             - static_checks
@@ -127,3 +144,14 @@ workflows:
           filters:
             branches:
               only: typescript-releases
+
+      
+      - javascript/semantic_release:
+          name: Semantic Release (FlowType)
+          context: wealthsimple
+          npm_publish_publicly: true
+          requires:
+            - check_typescript_convertability
+          filters:
+            branches:
+              only: flowtype-releases
