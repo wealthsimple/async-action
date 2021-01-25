@@ -110,7 +110,7 @@ workflows:
                 - typescript-releases
 
       - update_typescript_release_branch:
-          name: Semantic Release (TypeScript)
+          name: Update typescript release branch
           context: wealthsimple
           requires:
             - static_checks
@@ -123,7 +123,7 @@ workflows:
        
       - publish_typescript:
           name: Semantic Release (TypeScript)
-          context: Wealthsimple
+          context: wealthsimple
           filters:
             branches:
               only: typescript-releases
