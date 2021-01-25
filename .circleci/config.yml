@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  javascript: wealthsimple/javascript@dev:master
+  javascript: wealthsimple/javascript@dev:SethDavenport-patch-1
   sonarqube: wealthsimple/sonarqube@dev:master
 
 references:
