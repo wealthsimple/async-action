@@ -44,11 +44,11 @@ jobs:
   publish_typescript:
     executor: javascript/node
     steps:
-        - checkout
-        - javascript/attach_code_workspace
-        - run:
-          name: Convert to TypeScript
-          command: ./scripts/tsconvert.bash
+      - checkout
+      - javascript/attach_code_workspace
+      - run:
+        name: Convert to TypeScript
+        command: ./scripts/tsconvert.bash
       - run:
           name: Release
           command: |
