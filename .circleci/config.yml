@@ -31,13 +31,28 @@ jobs:
       - checkout
       - javascript/attach_code_workspace
       - run:
+          name: Switch to TypeScript release branch
+          command: git checkout typescript-releases
+      - run:
+          name: Update TypeScript release branch to match master
+          # Warning: Cherry-pick only works here because this job runs on master and we
+          # squash merge. If this works, we can look into using a separate flow-release
+          # branch too in order to keep master clean of version commits.
+          command: git cherry-pick ${CIRCLE_SHA1} && git push origin typescript-releases
+      - run:
           name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
-      - run: |
-          # This package is on npm, not Nexus.
-          export NPM_TOKEN="${PUBLIC_NPM_TOKEN}"
-          npm set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
-          GITHUB_TOKEN="${DEVTOOLS_GITHUB_API_TOKEN}" yarn run semantic-release
+      - run:
+          name: Release
+          command: |
+            # The tsconvert script reconfigures package.json to use the -ts package
+            # name and the typescript-releases branch, to keep the TS releases separate
+            # from the flow ones on master.
+            #
+            # This package is on npm, not Nexus.
+            export NPM_TOKEN="${PUBLIC_NPM_TOKEN}"
+            npm set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+            GITHUB_TOKEN="${DEVTOOLS_GITHUB_API_TOKEN}" yarn run semantic-release
 
 workflows:
   version: 2.1

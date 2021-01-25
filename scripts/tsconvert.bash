@@ -119,10 +119,11 @@ EOF
   jq 'del(.jest)' package.json \
     | jq 'del(.scripts.flow)' \
     | jq 'del(.scripts."build:copy-files")' \
-    | jq '.name = "@wealthsimple/async-action-ts"' \
     | jq '.scripts.check_types = "tsc"' \
     | jq '.scripts.prettier = "prettier --write \"./+(src)/**/*.ts\""' \
     | jq '.scripts.build = "tsc -p tsconfig.build.json"' \
+    | jq '.name = "@wealthsimple/async-action-ts"' \
+    | jq '.release.branches[0].name = "typescript-releases"' \
     > package.json.tmp
 
   mv package.json.tmp package.json
