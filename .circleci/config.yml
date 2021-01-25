@@ -47,8 +47,8 @@ jobs:
       - checkout
       - javascript/attach_code_workspace
       - run:
-        name: Convert to TypeScript
-        command: ./scripts/tsconvert.bash
+          name: Convert to TypeScript
+          command: ./scripts/tsconvert.bash
       - run:
           name: Release
           command: |
