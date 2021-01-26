@@ -122,8 +122,9 @@ EOF
     | jq '.scripts.check_types = "tsc"' \
     | jq '.scripts.prettier = "prettier --write \"./+(src)/**/*.ts\""' \
     | jq '.scripts.build = "tsc -p tsconfig.build.json"' \
-    | jq '.name = "@wealthsimple/async-action-ts"' \
     | jq '.release.branches[0].name = "typescript-releases"' \
+    | jq '.release.branches[0].prerelease = "beta"' \
+    | jq '.release.branches[0].channel = "typescript"' \
     | jq 'del(.release.plugins[4])' \
     > package.json.tmp
 
