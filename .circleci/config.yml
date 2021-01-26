@@ -56,7 +56,7 @@ jobs:
             echo "Checking if TypeScript release is needed"
             echo "Last version: $LAST_VERSION"
             echo "Next version: $NEXT_VERSION"
-            #if [ "$LAST_VERSION" != "$NEXT_VERSION" ]; then
+            if [ "$LAST_VERSION" != "$NEXT_VERSION" ]; then
               echo "Versions are different - making a typescript release."
               # Publish TS version under a different package name until we have the full
               # stack sorted out.  
@@ -65,9 +65,9 @@ jobs:
                 > package.json.tmp
               mv package.json.tmp package.json
               npm publish
-            #else
-            #  echo "Versions are the same. Skipping TypeScript release"
-            #fi
+            else
+              echo "Versions are the same. Skipping TypeScript release"
+            fi
 workflows:
   version: 2.1
   build-and-deploy:
