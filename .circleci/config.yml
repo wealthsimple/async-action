@@ -38,7 +38,7 @@ jobs:
             git checkout flowtype-releases
             git config user.email "noreply@wealthsimple.com"
             git config user.name "Wolfbot"
-            git merge master
+            git merge master --no-edit
             git push origin flowtype-releases
 
   update_typescript_release_branch:
@@ -52,7 +52,7 @@ jobs:
             git checkout typescript-releases
             git config user.email "noreply@wealthsimple.com"
             git config user.name "Wolfbot"
-            git merge master
+            git merge master --no-edit
             git push origin typescript-releases
 
   publish_typescript:
