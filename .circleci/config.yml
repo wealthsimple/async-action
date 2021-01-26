@@ -17,8 +17,7 @@ jobs:
       - javascript/yarn_install_dependencies
       - javascript/run_unit_tests
       - sonarqube/scan
-
-  check_typescript_convertability:
+  convert_to_typescript:
     executor: javascript/node
     steps:
       - checkout
@@ -26,56 +25,49 @@ jobs:
       - run:
           name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
-
-  update_flowtype_release_branch:
-    executor: javascript/node
-    steps:
-      - checkout
-      - javascript/attach_code_workspace
-      - run:
-          name: Update release branch if necessary
-          command: |
-            git checkout flowtype-releases
-            git config user.email "noreply@wealthsimple.com"
-            git config user.name "Wolfbot"
-            git merge master --no-edit
-            git push origin flowtype-releases
-
-  update_typescript_release_branch:
-    executor: javascript/node
-    steps:
-      - checkout
-      - javascript/attach_code_workspace
-      - run:
-          name: Update release branch if necessary
-          command: |
-            git checkout typescript-releases
-            git config user.email "noreply@wealthsimple.com"
-            git config user.name "Wolfbot"
-            git merge master --no-edit
-            git push origin typescript-releases
-
-  publish_typescript:
+  dual_publish:
     executor: javascript/node
     steps:
       - checkout
       - javascript/attach_code_workspace
       - javascript/yarn_install_dependencies
       - run:
-          name: Convert to TypeScript
-          command: ./scripts/tsconvert.bash
-      - run:
-          name: Release
+          name: Dual Release (FlowType, TypeScript)
           command: |
-            # The tsconvert script reconfigures package.json to use the -ts package
-            # name and the typescript-releases branch, to keep the TS releases separate
-            # from the flow ones on master.
-            #
+            # Get the last release tag.
+            export LAST_VERSION=$(git tag --list "v*" | cut -c2- | tail -1)
+            echo "Current version is $LAST_VERSION"
+
+            # Run semantic release to compute the next version and 
+            # do the FlowType release if necessary.
             # This package is on npm, not Nexus.
             export NPM_TOKEN="${PUBLIC_NPM_TOKEN}"
             npm set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
             GITHUB_TOKEN="${DEVTOOLS_GITHUB_API_TOKEN}" yarn run semantic-release
-
+      
+            # Get the new release tag
+            export NEXT_VERSION=$(git tag --list "v*" | cut -c2- | tail -1)
+            echo "Next version is $NEXT_VERSION"
+            
+            # Convert package to typescript.
+            ./scripts/tsconvert.bash
+      
+            # Do the typescript release if necessary.
+            echo "Checking if TypeScript release is needed"
+            echo "Last version: $LAST_VERSION"
+            echo "Next version: $NEXT_VERSION"
+            #if [ "$LAST_VERSION" != "$NEXT_VERSION" ]; then
+              echo "Versions are different - making a typescript release."
+              # Publish TS version under a different package name until we have the full
+              # stack sorted out.  
+              jq '.name = "@wealthsimple/async-action-ts"' package.json \
+                | jq ".version = \"$NEXT_VERSION\"" \
+                > package.json.tmp
+              mv package.json.tmp package.json
+              npm publish
+            #else
+            #  echo "Versions are the same. Skipping TypeScript release"
+            #fi
 workflows:
   version: 2.1
   build-and-deploy:
@@ -83,74 +75,23 @@ workflows:
       - javascript/security:
           name: security
           context: wealthsimple
-          filters:
-            branches:
-              ignore:
-                - typescript-releases
-                - flowtype-releases
-
       - test:
           context: wealthsimple
           name: test
-          filters:
-            branches:
-              ignore:
-                - typescript-releases
-                - flowtype-releases
-
       - javascript/static_checks:
           context: wealthsimple
           name: static_checks
-          filters:
-            branches:
-              ignore:
-                - typescript-releases
-                - flowtype-releases
-
-      - check_typescript_convertability:
-          context: wealthsimple
-          filters:
-            branches:
-              ignore:
-                - typescript-releases
-                - flowtype-releases
-
-      - update_flowtype_release_branch:
-          name: Update FlowType release branch
+      - dual_publish:
+          name: Semantic Release (FlowType and TypeScript)
           context: wealthsimple
           requires:
             - static_checks
             - security
             - test
-            - check_typescript_convertability
+            - convert_to_typescript
           filters:
             branches:
               only: master
+      - convert_to_typescript:
+          context: wealthsimple
 
-      - update_typescript_release_branch:
-          name: Update TypeScript release branch
-          context: wealthsimple
-          requires:
-            - static_checks
-            - security
-            - test
-            - check_typescript_convertability
-          filters:
-            branches:
-              only: master
-       
-      - publish_typescript:
-          name: Semantic Release (TypeScript)
-          context: wealthsimple
-          filters:
-            branches:
-              only: typescript-releases
-
-      
-      - javascript/semantic_release:
-          name: Semantic Release (FlowType)
-          context: wealthsimple
-          npm_publish_publicly: true
-          filters:
-            branches:
-              only: flowtype-releases
