@@ -60,6 +60,7 @@ jobs:
     steps:
       - checkout
       - javascript/attach_code_workspace
+      - javascript/yarn_install_dependencies
       - run:
           name: Convert to TypeScript
           command: ./scripts/tsconvert.bash
