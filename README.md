@@ -1,6 +1,3 @@
-[![Coverage Status](https://coveralls.io/repos/github/wealthsimple/async-action/badge.svg?branch=master&t=FmpSiU)](https://coveralls.io/github/wealthsimple/async-action?branch=master)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=wealthsimple/async-action&identifier=123380773)](https://dependabot.com)
-
 # An Asynchronous Action Definition for Redux
 
 If you're doing asynchronous actions with redux-thunk, this mini lib provides a standardized way of tracking them in your store and querying for progress and errors with reselect.

@@ -119,6 +119,8 @@ EOF
     | jq '.scripts.check_types = "tsc"' \
     | jq '.scripts.prettier = "prettier --write \"./+(src)/**/*.ts\""' \
     | jq '.scripts.build = "tsc -p tsconfig.build.json"' \
+    | jq '.main = "./dist/index.js"' \
+    | jq '.types = "./dist/index.d.ts"' \
     > package.json.tmp
 
   mv package.json.tmp package.json
@@ -170,7 +172,7 @@ function configure_eslint() {
 
   # update eslint, use minimal plugins for a non-react repo.
   yarn remove eslint eslint-config-airbnb eslint-config-airbnb-base eslint-config-prettier eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-prettier eslint-plugin-react
-  yarn add eslint
+  yarn add --dev eslint
   
   cat <<EOF > .eslintrc.json
 {

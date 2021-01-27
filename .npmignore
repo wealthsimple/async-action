@@ -4,3 +4,11 @@ coverage/*
 *.log
 .DS_Store
 .yarn-cache/*
+audit-known-issues.json
+.prettierignore
+.prettierrc
+jest/*
+.github/*
+.circleci/*
+catalog-info.yaml
+sonar-project.properties
