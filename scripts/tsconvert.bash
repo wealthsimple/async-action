@@ -85,8 +85,7 @@ function configure_typescript() {
   "compilerOptions": {
     "baseUrl": ".",
     "esModuleInterop": true,
-    "lib": ["ES5"],
-    "module": "commonjs",
+    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
@@ -101,26 +100,47 @@ function configure_typescript() {
 }
 EOF
 
-  # Production configuration
-  cat <<EOF > tsconfig.build.json
+  # Production configuration, CommonJS.
+  cat <<EOF > tsconfig.build.cjs.json
 {
   "extends": "./tsconfig",
   "compilerOptions": {
     "declaration": true,
+    "sourceMap": true,
+    "module": "commonjs",
     "noEmit": false,
-    "outDir": "./dist",
+    "outDir": "./dist/cjs",
   },
   "exclude": ["**/*.test.ts", "**/*.spec.ts", "**/__mocks__/*"]
 }
 EOF
+
+  # Production configuration, ECMAScript modules.
+  cat <<EOF > tsconfig.build.esm.json
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "declaration": false,
+    "sourceMap": true,
+    "module": "ESNext",
+    "noEmit": false,
+    "outDir": "./dist/esm",
+  },
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "**/__mocks__/*"]
+}
+EOF
+
   jq 'del(.jest)' package.json \
     | jq 'del(.scripts.flow)' \
     | jq 'del(.scripts."build:copy-files")' \
     | jq '.scripts.check_types = "tsc"' \
     | jq '.scripts.prettier = "prettier --write \"./+(src)/**/*.ts\""' \
-    | jq '.scripts.build = "tsc -p tsconfig.build.json"' \
-    | jq '.main = "./dist/index.js"' \
-    | jq '.types = "./dist/index.d.ts"' \
+    | jq '.scripts.build = "yarn build:cjs && yarn build:esm"' \
+    | jq '.scripts."build:cjs" = "tsc -p tsconfig.build.cjs.json"' \
+    | jq '.scripts."build:esm" = "tsc -p tsconfig.build.esm.json"' \
+    | jq '.main = "./dist/cjs/index.js"' \
+    | jq '.types = "./dist/cjs/index.d.ts"' \
+    | jq '.modules = "./dist/esm/index.js"' \
     > package.json.tmp
 
   mv package.json.tmp package.json
